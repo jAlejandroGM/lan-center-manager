@@ -7,7 +7,7 @@ const DebtForm = ({ onAdd, loading }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!name || !amount) return;
+    if (!name || !amount || parseFloat(amount) < 0) return;
 
     const success = await onAdd({
       customer_name: name,
