@@ -11,6 +11,13 @@ export const EXPENSE_CATEGORIES = {
   OTHER: "OTHER",
 };
 
+export const EXPENSE_LABELS = {
+  [EXPENSE_CATEGORIES.STAFF_PAYMENT]: "Pago de Personal",
+  [EXPENSE_CATEGORIES.SUPPLIES]: "Suministros",
+  [EXPENSE_CATEGORIES.SERVICES]: "Servicios",
+  [EXPENSE_CATEGORIES.OTHER]: "Otros",
+};
+
 export const DEBT_STATUS = {
   PENDING: "PENDING",
   PAID: "PAID",
@@ -20,4 +27,9 @@ export const DEBT_STATUS = {
 export const PAYMENT_METHODS = {
   CASH: "CASH",
   YAPE: "YAPE",
+};
+
+export const PAYMENT_METHOD_LABELS = {
+  [PAYMENT_METHODS.CASH]: "Efectivo",
+  [PAYMENT_METHODS.YAPE]: "Yape",
 };

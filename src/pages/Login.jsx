@@ -14,7 +14,7 @@ const Login = () => {
     if (login(pin)) {
       navigate("/dashboard");
     } else {
-      setError("Invalid PIN");
+      setError("PIN Inválido");
       setPin("");
     }
   };
@@ -28,13 +28,13 @@ const Login = () => {
           </div>
         </div>
         <h1 className="text-2xl font-bold text-center mb-6">
-          LAN Center Access
+          Acceso al Sistema
         </h1>
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
             <label className="block text-sm font-medium text-gray-400 mb-1">
-              Enter PIN
+              Ingresa tu PIN
             </label>
             <input
               type="password"
@@ -57,7 +57,7 @@ const Login = () => {
             type="submit"
             className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 rounded transition-colors"
           >
-            Unlock System
+            Ingresar
           </button>
         </form>
 

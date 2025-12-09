@@ -15,7 +15,7 @@ const ProtectedRoute = ({ allowedRoles }) => {
     // A better approach might be a dedicated "Unauthorized" page.
     return (
       <div className="p-4 text-red-500">
-        Access Denied: Insufficient Permissions
+        Acceso Denegado: Permisos Insuficientes
       </div>
     );
   }

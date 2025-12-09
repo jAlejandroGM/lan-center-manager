@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { format } from "date-fns";
+import { es } from "date-fns/locale";
 import { logService } from "../services/logService";
 import { expenseService } from "../services/expenseService";
 import { debtService } from "../services/debtService";
@@ -110,40 +111,40 @@ const Dashboard = () => {
   return (
     <div className="max-w-6xl mx-auto">
       <div className="flex justify-between items-center mb-8">
-        <h1 className="text-3xl font-bold text-white">Dashboard</h1>
+        <h1 className="text-3xl font-bold text-white">Panel Principal</h1>
         <div className="text-right">
-          <p className="text-gray-400">Today's Overview</p>
+          <p className="text-gray-400">Resumen de Hoy</p>
           <p className="text-xl font-bold text-white">
-            {format(new Date(), "EEEE, dd MMMM")}
+            {format(new Date(), "EEEE, dd 'de' MMMM", { locale: es })}
           </p>
         </div>
       </div>
 
       {loading ? (
-        <div className="text-center text-white">Loading metrics...</div>
+        <div className="text-center text-white">Cargando métricas...</div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
           <MetricCard
-            title="Net Total"
+            title="Total Neto"
             value={metrics.netTotal}
             icon={DollarSign}
             color="text-green-400"
-            subtext="Final balance after expenses"
+            subtext="Balance final tras gastos"
           />
           <MetricCard
-            title="Total Expenses"
+            title="Gastos Totales"
             value={metrics.expenses}
             icon={TrendingDown}
             color="text-red-400"
           />
           <MetricCard
-            title="Debts Collected"
+            title="Deudas Cobradas"
             value={metrics.debtsPaid}
             icon={TrendingUp}
             color="text-blue-400"
           />
           <MetricCard
-            title="Shortage"
+            title="Faltante"
             value={metrics.shortage}
             icon={AlertCircle}
             color="text-yellow-400"
@@ -154,29 +155,29 @@ const Dashboard = () => {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <div className="bg-gray-800 p-6 rounded-lg border border-gray-700">
           <h3 className="text-lg font-bold text-white mb-4">
-            Income Breakdown
+            Desglose de Ingresos
           </h3>
           <div className="space-y-4">
             <div className="flex justify-between items-center border-b border-gray-700 pb-2">
-              <span className="text-gray-300">Cash Income</span>
+              <span className="text-gray-300">Efectivo</span>
               <span className="text-white font-bold">
                 S/. {metrics.cashIncome.toFixed(2)}
               </span>
             </div>
             <div className="flex justify-between items-center border-b border-gray-700 pb-2">
-              <span className="text-gray-300">Yape Income</span>
+              <span className="text-gray-300">Yape</span>
               <span className="text-white font-bold">
                 S/. {metrics.yapeIncome.toFixed(2)}
               </span>
             </div>
             <div className="flex justify-between items-center border-b border-gray-700 pb-2">
-              <span className="text-gray-300">Night Shift</span>
+              <span className="text-gray-300">Amanecidas</span>
               <span className="text-white font-bold">
                 S/. {metrics.nightShift.toFixed(2)}
               </span>
             </div>
             <div className="flex justify-between items-center pt-2">
-              <span className="text-gray-300">Debts Recovered</span>
+              <span className="text-gray-300">Deudas Pagadas</span>
               <span className="text-white font-bold">
                 S/. {metrics.debtsPaid.toFixed(2)}
               </span>
@@ -185,15 +186,18 @@ const Dashboard = () => {
         </div>
 
         <div className="bg-gray-800 p-6 rounded-lg border border-gray-700">
-          <h3 className="text-lg font-bold text-white mb-4">System Status</h3>
+          <h3 className="text-lg font-bold text-white mb-4">
+            Estado del Sistema
+          </h3>
           <p className="text-gray-400">
-            This dashboard reflects the current day's operations. Ensure all
-            expenses and debts are logged correctly for an accurate Net Total.
+            Este panel refleja las operaciones del día actual. Asegúrate de
+            registrar correctamente todos los gastos y deudas para obtener un
+            Total Neto preciso.
           </p>
           <div className="mt-6 p-4 bg-blue-900/20 rounded border border-blue-800">
             <p className="text-sm text-blue-300">
-              <strong>Tip:</strong> Use the "Daily Entry" page to log the final
-              cash count at the end of the day.
+              <strong>Consejo:</strong> Usa la página 'Registro Diario' para
+              ingresar el conteo final de efectivo al cierre del día.
             </p>
           </div>
         </div>
