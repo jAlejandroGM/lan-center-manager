@@ -1,7 +1,7 @@
 import React from "react";
 import { format } from "date-fns";
 import { CheckCircle, XCircle, Clock } from "lucide-react";
-import { DEBT_STATUS, ROLES } from "../../constants";
+import { DEBT_STATUS, ROLES, PAYMENT_METHOD_LABELS } from "../../constants";
 import { useAuth } from "../../hooks/useAuth";
 
 const DebtList = ({ debts, onPayClick, onCancelClick }) => {
@@ -38,8 +38,10 @@ const DebtList = ({ debts, onPayClick, onCancelClick }) => {
             </div>
             {debt.status === DEBT_STATUS.PAID && (
               <div className="text-xs text-green-400 mt-1">
-                Paid via {debt.payment_method} on{" "}
-                {format(new Date(debt.paid_at), "dd/MM HH:mm")}
+                Pagado vía{" "}
+                {PAYMENT_METHOD_LABELS[debt.payment_method] ||
+                  debt.payment_method}{" "}
+                el {format(new Date(debt.paid_at), "dd/MM HH:mm")}
               </div>
             )}
           </div>
@@ -55,13 +57,13 @@ const DebtList = ({ debts, onPayClick, onCancelClick }) => {
                   onClick={() => onPayClick(debt)}
                   className="px-3 py-1 bg-green-600 hover:bg-green-700 text-white text-sm rounded transition-colors"
                 >
-                  Pay
+                  Pagar
                 </button>
                 <button
                   onClick={() => onCancelClick(debt.id)}
                   className="px-3 py-1 bg-red-600 hover:bg-red-700 text-white text-sm rounded transition-colors"
                 >
-                  Cancel
+                  Anular
                 </button>
               </div>
             )}
@@ -70,7 +72,9 @@ const DebtList = ({ debts, onPayClick, onCancelClick }) => {
       ))}
 
       {debts.length === 0 && (
-        <div className="text-center text-gray-500 py-8">No debts found.</div>
+        <div className="text-center text-gray-500 py-8">
+          No se encontraron deudas.
+        </div>
       )}
     </div>
   );

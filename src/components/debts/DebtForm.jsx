@@ -5,13 +5,19 @@ const DebtForm = ({ onAdd, loading }) => {
   const [name, setName] = useState("");
   const [amount, setAmount] = useState("");
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if (!name || !amount) return;
 
-    onAdd({ customer_name: name, amount: parseFloat(amount) });
-    setName("");
-    setAmount("");
+    const success = await onAdd({
+      customer_name: name,
+      amount: parseFloat(amount),
+    });
+
+    if (success) {
+      setName("");
+      setAmount("");
+    }
   };
 
   return (
@@ -21,12 +27,12 @@ const DebtForm = ({ onAdd, loading }) => {
     >
       <h3 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
         <PlusCircle className="w-5 h-5 text-blue-400" />
-        New Debt
+        Nueva Deuda
       </h3>
       <div className="flex flex-col md:flex-row gap-4">
         <input
           type="text"
-          placeholder="Customer Name"
+          placeholder="Nombre del Cliente"
           value={name}
           onChange={(e) => setName(e.target.value)}
           className="flex-1 p-2 bg-gray-700 border border-gray-600 rounded text-white focus:outline-none focus:border-blue-500"
@@ -34,7 +40,7 @@ const DebtForm = ({ onAdd, loading }) => {
         />
         <input
           type="number"
-          placeholder="Amount (S/.)"
+          placeholder="Monto (S/.)"
           value={amount}
           onChange={(e) => setAmount(e.target.value)}
           className="w-full md:w-32 p-2 bg-gray-700 border border-gray-600 rounded text-white focus:outline-none focus:border-blue-500"
@@ -47,7 +53,7 @@ const DebtForm = ({ onAdd, loading }) => {
           disabled={loading}
           className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-6 rounded transition-colors disabled:opacity-50"
         >
-          {loading ? "Adding..." : "Add"}
+          {loading ? "Agregando..." : "Agregar"}
         </button>
       </div>
     </form>

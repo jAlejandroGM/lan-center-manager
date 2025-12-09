@@ -32,7 +32,7 @@ const Layout = () => {
                   className="flex items-center gap-2 px-3 py-2 rounded hover:bg-gray-700 transition-colors"
                 >
                   <LayoutDashboard className="w-5 h-5" />
-                  <span className="hidden md:inline">Dashboard</span>
+                  <span className="hidden md:inline">Panel Principal</span>
                 </Link>
               </li>
               <li>
@@ -41,7 +41,7 @@ const Layout = () => {
                   className="flex items-center gap-2 px-3 py-2 rounded hover:bg-gray-700 transition-colors"
                 >
                   <Wallet className="w-5 h-5" />
-                  <span className="hidden md:inline">Debts</span>
+                  <span className="hidden md:inline">Deudas</span>
                 </Link>
               </li>
               {user?.role === "ADMIN" && (
@@ -51,7 +51,7 @@ const Layout = () => {
                     className="flex items-center gap-2 px-3 py-2 rounded hover:bg-gray-700 transition-colors"
                   >
                     <FileText className="w-5 h-5" />
-                    <span className="hidden md:inline">Daily Entry</span>
+                    <span className="hidden md:inline">Registro Diario</span>
                   </Link>
                 </li>
               )}
@@ -61,7 +61,7 @@ const Layout = () => {
                   className="flex items-center gap-2 px-3 py-2 rounded text-red-400 hover:bg-red-900/20 hover:text-red-300 transition-colors"
                 >
                   <LogOut className="w-5 h-5" />
-                  <span className="hidden md:inline">Logout</span>
+                  <span className="hidden md:inline">Salir</span>
                 </button>
               </li>
             </ul>

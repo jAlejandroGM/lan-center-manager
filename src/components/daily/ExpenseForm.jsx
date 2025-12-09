@@ -1,33 +1,38 @@
 import React, { useState } from "react";
 import { Plus, Trash2 } from "lucide-react";
-import { EXPENSE_CATEGORIES } from "../../constants";
+import { EXPENSE_CATEGORIES, EXPENSE_LABELS } from "../../constants";
 
 const ExpenseForm = ({ expenses, onAdd, onDelete }) => {
   const [category, setCategory] = useState(EXPENSE_CATEGORIES.OTHER);
   const [beneficiary, setBeneficiary] = useState("");
   const [amount, setAmount] = useState("");
   const [description, setDescription] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if (!amount) return;
 
-    onAdd({
+    setIsSubmitting(true);
+    const success = await onAdd({
       category,
       beneficiary,
       amount: parseFloat(amount),
       description,
       date: new Date().toISOString().split("T")[0],
     });
+    setIsSubmitting(false);
 
-    setBeneficiary("");
-    setAmount("");
-    setDescription("");
+    if (success) {
+      setBeneficiary("");
+      setAmount("");
+      setDescription("");
+    }
   };
 
   return (
-    <div className="bg-gray-800 p-6 rounded-lg border border-gray-700 mb-6">
-      <h3 className="text-xl font-bold text-white mb-4">Expenses</h3>
+    <div className="bg-gray-800 p-6 rounded-lg border border-gray-700">
+      <h3 className="text-xl font-bold text-white mb-4">Gastos</h3>
 
       <form
         onSubmit={handleSubmit}
@@ -40,14 +45,14 @@ const ExpenseForm = ({ expenses, onAdd, onDelete }) => {
         >
           {Object.values(EXPENSE_CATEGORIES).map((cat) => (
             <option key={cat} value={cat}>
-              {cat}
+              {EXPENSE_LABELS[cat]}
             </option>
           ))}
         </select>
 
         <input
           type="text"
-          placeholder="Beneficiary (Optional)"
+          placeholder="Beneficiario (Opcional)"
           value={beneficiary}
           onChange={(e) => setBeneficiary(e.target.value)}
           className="p-2 bg-gray-700 border border-gray-600 rounded text-white"
@@ -55,7 +60,7 @@ const ExpenseForm = ({ expenses, onAdd, onDelete }) => {
 
         <input
           type="number"
-          placeholder="Amount (S/.)"
+          placeholder="Monto (S/.)"
           value={amount}
           onChange={(e) => setAmount(e.target.value)}
           className="p-2 bg-gray-700 border border-gray-600 rounded text-white"
@@ -65,7 +70,7 @@ const ExpenseForm = ({ expenses, onAdd, onDelete }) => {
 
         <input
           type="text"
-          placeholder="Description (Optional)"
+          placeholder="Descripción (Opcional)"
           value={description}
           onChange={(e) => setDescription(e.target.value)}
           className="p-2 bg-gray-700 border border-gray-600 rounded text-white"
@@ -73,9 +78,11 @@ const ExpenseForm = ({ expenses, onAdd, onDelete }) => {
 
         <button
           type="submit"
-          className="md:col-span-2 bg-red-600 hover:bg-red-700 text-white font-bold py-2 rounded flex items-center justify-center gap-2"
+          disabled={isSubmitting}
+          className="md:col-span-2 bg-red-600 hover:bg-red-700 text-white font-bold py-2 rounded flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
         >
-          <Plus className="w-4 h-4" /> Add Expense
+          <Plus className="w-4 h-4" />{" "}
+          {isSubmitting ? "Agregando..." : "Agregar Gasto"}
         </button>
       </form>
 
@@ -86,7 +93,9 @@ const ExpenseForm = ({ expenses, onAdd, onDelete }) => {
             className="flex justify-between items-center bg-gray-700 p-3 rounded"
           >
             <div>
-              <div className="font-bold text-white">{expense.category}</div>
+              <div className="font-bold text-white">
+                {EXPENSE_LABELS[expense.category] || expense.category}
+              </div>
               <div className="text-sm text-gray-400">
                 {expense.beneficiary && `${expense.beneficiary} - `}
                 {expense.description}

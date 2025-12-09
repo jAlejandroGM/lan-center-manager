@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Save } from "lucide-react";
 
-const DailyLogForm = ({ initialData, onSave }) => {
+const DailyLogForm = ({ initialData, onSave, loading }) => {
   const [formData, setFormData] = useState({
     cash_income: initialData?.cash_income || 0,
     yape_income: initialData?.yape_income || 0,
@@ -26,14 +26,16 @@ const DailyLogForm = ({ initialData, onSave }) => {
   return (
     <form
       onSubmit={handleSubmit}
-      className="bg-gray-800 p-6 rounded-lg border border-gray-700"
+      className="bg-gray-800 p-6 rounded-lg border border-gray-700  mb-6"
     >
-      <h3 className="text-xl font-bold text-white mb-4">Daily Income Log</h3>
+      <h3 className="text-xl font-bold text-white mb-4">
+        Registro de Ingresos Diarios
+      </h3>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div>
           <label className="block text-sm font-medium text-gray-400 mb-1">
-            Cash Income
+            Efectivo
           </label>
           <input
             type="number"
@@ -47,7 +49,7 @@ const DailyLogForm = ({ initialData, onSave }) => {
 
         <div>
           <label className="block text-sm font-medium text-gray-400 mb-1">
-            Yape Income
+            Yape
           </label>
           <input
             type="number"
@@ -61,7 +63,7 @@ const DailyLogForm = ({ initialData, onSave }) => {
 
         <div>
           <label className="block text-sm font-medium text-gray-400 mb-1">
-            Night Shift Income
+            Amanecidas
           </label>
           <input
             type="number"
@@ -75,7 +77,7 @@ const DailyLogForm = ({ initialData, onSave }) => {
 
         <div>
           <label className="block text-sm font-medium text-red-400 mb-1">
-            Shortage (Missing Money)
+            Dinero Faltante
           </label>
           <input
             type="number"
@@ -89,7 +91,7 @@ const DailyLogForm = ({ initialData, onSave }) => {
 
         <div className="md:col-span-2">
           <label className="block text-sm font-medium text-gray-400 mb-1">
-            Notes
+            Notas
           </label>
           <textarea
             name="notes"
@@ -103,9 +105,11 @@ const DailyLogForm = ({ initialData, onSave }) => {
 
       <button
         type="submit"
-        className="mt-6 w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 rounded flex items-center justify-center gap-2"
+        disabled={loading}
+        className="mt-6 w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 rounded flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
       >
-        <Save className="w-5 h-5" /> Save Daily Log
+        <Save className="w-5 h-5" />{" "}
+        {loading ? "Guardando..." : "Guardar Registro Diario"}
       </button>
     </form>
   );
