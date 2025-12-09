@@ -4,6 +4,7 @@ import Login from "./pages/Login";
 import Dashboard from "./pages/Dashboard";
 import DailyEntry from "./pages/DailyEntry";
 import Debts from "./pages/Debts";
+import History from "./pages/History";
 import Layout from "./components/layout/Layout";
 import { AuthProvider } from "./context/AuthProvider";
 import { ToastProvider } from "./context/ToastProvider";
@@ -21,6 +22,7 @@ function App() {
             <Route element={<ProtectedRoute />}>
               <Route element={<Layout />}>
                 <Route path="/dashboard" element={<Dashboard />} />
+                <Route path="/history" element={<History />} />
                 <Route path="/debts" element={<Debts />} />
 
                 {/* Admin Only Routes */}

@@ -12,6 +12,21 @@ export const expenseService = {
     return data;
   },
 
+  async getExpensesByMonth(year, month) {
+    const startDate = new Date(year, month, 1).toISOString().split("T")[0];
+    const endDate = new Date(year, month + 1, 0).toISOString().split("T")[0];
+
+    const { data, error } = await supabase
+      .from("expenses")
+      .select("*")
+      .gte("date", startDate)
+      .lte("date", endDate)
+      .order("date", { ascending: true });
+
+    if (error) throw error;
+    return data;
+  },
+
   async addExpense(expense) {
     const { data, error } = await supabase
       .from("expenses")
