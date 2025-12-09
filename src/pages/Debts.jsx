@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useCallback } from "react";
 import { debtService } from "../services/debtService";
 import DebtForm from "../components/debts/DebtForm";
 import DebtList from "../components/debts/DebtList";
@@ -6,12 +6,12 @@ import PaymentModal from "../components/debts/PaymentModal";
 import MonthYearSelector from "../components/ui/MonthYearSelector";
 import { useAuth } from "../hooks/useAuth";
 import { useToast } from "../hooks/useToast";
+import { useFetch } from "../hooks/useFetch";
 import { ROLES } from "../constants";
 import { Search, ChevronLeft, ChevronRight } from "lucide-react";
 
 const Debts = () => {
   const [debts, setDebts] = useState([]);
-  const [loading, setLoading] = useState(true);
   const [selectedDebt, setSelectedDebt] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
@@ -28,56 +28,44 @@ const Debts = () => {
 
   const canAdd = [ROLES.ADMIN, ROLES.WORKER].includes(user?.role);
 
-  const fetchDebts = async () => {
-    try {
-      setLoading(true);
+  const fetchDebts = useCallback(async () => {
+    const startDate = new Date(selectedYear, selectedMonth, 1).toISOString();
+    const endDate = new Date(
+      selectedYear,
+      selectedMonth + 1,
+      0,
+      23,
+      59,
+      59
+    ).toISOString();
 
-      const startDate = new Date(selectedYear, selectedMonth, 1).toISOString();
-      const endDate = new Date(
-        selectedYear,
-        selectedMonth + 1,
-        0,
-        23,
-        59,
-        59
-      ).toISOString();
+    const { data, count } = await debtService.getDebts({
+      startDate,
+      endDate,
+      searchTerm,
+      page,
+      pageSize,
+    });
 
-      const { data, count } = await debtService.getDebts({
-        startDate,
-        endDate,
-        searchTerm,
-        page,
-        pageSize,
-      });
-
-      setDebts(data);
-      setTotalCount(count || 0);
-    } catch (error) {
-      console.error("Error fetching debts:", error);
-      toast.error("Error al cargar deudas");
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    fetchDebts();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    setDebts(data);
+    setTotalCount(count || 0);
+    return data;
   }, [selectedMonth, selectedYear, searchTerm, page]);
+
+  const { loading, refetch } = useFetch(fetchDebts, [fetchDebts], {
+    errorMessage: "Error al cargar deudas",
+  });
 
   const handleAddDebt = async (debtData) => {
     try {
-      setLoading(true);
       await debtService.addDebt(debtData);
-      await fetchDebts();
+      await refetch();
       toast.success("Deuda agregada exitosamente");
       return true;
     } catch (error) {
       console.error("Error adding debt:", error);
       toast.error("Error al agregar deuda");
       return false;
-    } finally {
-      setLoading(false);
     }
   };
 
@@ -91,7 +79,7 @@ const Debts = () => {
       await debtService.markAsPaid(id, method);
       setIsModalOpen(false);
       setSelectedDebt(null);
-      await fetchDebts();
+      await refetch();
       toast.success("Deuda marcada como pagada");
     } catch (error) {
       console.error("Error paying debt:", error);

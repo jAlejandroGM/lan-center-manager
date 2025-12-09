@@ -1,16 +1,9 @@
-import React, { useState, useEffect } from "react";
-import { format } from "date-fns";
-import { es } from "date-fns/locale";
+import { useState, useEffect } from "react";
 import { logService } from "../services/logService";
 import { expenseService } from "../services/expenseService";
 import { debtService } from "../services/debtService";
 import MonthYearSelector from "../components/ui/MonthYearSelector";
-import {
-  DollarSign,
-  TrendingUp,
-  TrendingDown,
-  AlertCircle,
-} from "lucide-react";
+import { DollarSign, TrendingDown, AlertCircle } from "lucide-react";
 
 const Dashboard = () => {
   const [selectedMonth, setSelectedMonth] = useState(new Date().getMonth());
@@ -19,10 +12,9 @@ const Dashboard = () => {
     cashIncome: 0,
     yapeIncome: 0,
     nightShift: 0,
-    debtsPaid: 0,
     expenses: 0,
     shortage: 0,
-    netTotal: 0,
+    totalIncome: 0,
   });
   const [loading, setLoading] = useState(true);
 
@@ -37,12 +29,11 @@ const Dashboard = () => {
           debtService.getPaidDebtsByMonth(selectedYear, selectedMonth),
         ]);
 
-        // Calculate Totals
-        const cashIncome = logs.reduce(
+        const cashFromLogs = logs.reduce(
           (sum, log) => sum + (log.cash_income || 0),
           0
         );
-        const yapeIncome = logs.reduce(
+        const yapeFromLogs = logs.reduce(
           (sum, log) => sum + (log.yape_income || 0),
           0
         );
@@ -55,22 +46,30 @@ const Dashboard = () => {
           0
         );
 
-        const totalExpenses = expenses.reduce((sum, e) => sum + e.amount, 0);
-        const totalDebtsPaid = paidDebts.reduce((sum, d) => sum + d.amount, 0);
+        // 2. Sum from Debts (distributed by method)
+        const debtsCash = paidDebts
+          .filter((d) => d.payment_method === "CASH")
+          .reduce((sum, d) => sum + d.amount, 0);
 
-        const totalIncome =
-          cashIncome + yapeIncome + nightShift + totalDebtsPaid;
-        const totalOutflow = totalExpenses + shortage;
-        const netTotal = totalIncome - totalOutflow;
+        const debtsYape = paidDebts
+          .filter((d) => d.payment_method === "YAPE")
+          .reduce((sum, d) => sum + d.amount, 0);
+
+        // 3. Sum Expenses
+        const totalExpenses = expenses.reduce((sum, e) => sum + e.amount, 0);
+
+        // 4. Combined Totals
+        const cashIncome = cashFromLogs + debtsCash;
+        const yapeIncome = yapeFromLogs + debtsYape;
+        const totalIncome = cashIncome + yapeIncome + nightShift;
 
         setMetrics({
           cashIncome,
           yapeIncome,
           nightShift,
-          debtsPaid: totalDebtsPaid,
           expenses: totalExpenses,
           shortage,
-          netTotal,
+          totalIncome,
         });
       } catch (error) {
         console.error("Error fetching dashboard data:", error);
@@ -126,25 +125,19 @@ const Dashboard = () => {
       {loading ? (
         <div className="text-center text-white">Cargando métricas...</div>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
           <MetricCard
-            title="Total Neto"
-            value={metrics.netTotal}
+            title="Total Ingresos"
+            value={metrics.totalIncome}
             icon={DollarSign}
             color="text-green-400"
-            subtext="Balance final tras gastos"
+            subtext="Ingresos Brutos (Efectivo + Yape + Amanecidas)"
           />
           <MetricCard
             title="Gastos Totales"
             value={metrics.expenses}
             icon={TrendingDown}
             color="text-red-400"
-          />
-          <MetricCard
-            title="Deudas Cobradas"
-            value={metrics.debtsPaid}
-            icon={TrendingUp}
-            color="text-blue-400"
           />
           <MetricCard
             title="Faltante"
@@ -173,16 +166,10 @@ const Dashboard = () => {
                 S/. {metrics.yapeIncome.toFixed(2)}
               </span>
             </div>
-            <div className="flex justify-between items-center border-b border-gray-700 pb-2">
+            <div className="flex justify-between items-center pt-2">
               <span className="text-gray-300">Amanecidas</span>
               <span className="text-white font-bold">
                 S/. {metrics.nightShift.toFixed(2)}
-              </span>
-            </div>
-            <div className="flex justify-between items-center pt-2">
-              <span className="text-gray-300">Deudas Pagadas</span>
-              <span className="text-white font-bold">
-                S/. {metrics.debtsPaid.toFixed(2)}
               </span>
             </div>
           </div>

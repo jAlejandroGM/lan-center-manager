@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from "react";
+import React, { useState, useCallback, useMemo } from "react";
 import { ToastContext } from "./ToastContext";
 import Toast from "../components/ui/Toast";
 
@@ -14,12 +14,15 @@ export const ToastProvider = ({ children }) => {
     setToasts((prev) => prev.filter((toast) => toast.id !== id));
   }, []);
 
-  const value = {
-    addToast,
-    success: (msg) => addToast(msg, "success"),
-    error: (msg) => addToast(msg, "error"),
-    info: (msg) => addToast(msg, "info"),
-  };
+  const value = useMemo(
+    () => ({
+      addToast,
+      success: (msg) => addToast(msg, "success"),
+      error: (msg) => addToast(msg, "error"),
+      info: (msg) => addToast(msg, "info"),
+    }),
+    [addToast]
+  );
 
   return (
     <ToastContext.Provider value={value}>

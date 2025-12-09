@@ -1,40 +1,37 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { format } from "date-fns";
 import { logService } from "../services/logService";
 import { expenseService } from "../services/expenseService";
 import DailyLogForm from "../components/daily/DailyLogForm";
 import ExpenseForm from "../components/daily/ExpenseForm";
 import { useToast } from "../hooks/useToast";
+import { useFetch } from "../hooks/useFetch";
 
 const DailyEntry = () => {
   const [logData, setLogData] = useState(null);
   const [expenses, setExpenses] = useState([]);
-  const [loading, setLoading] = useState(true);
   const [savingLog, setSavingLog] = useState(false);
   const today = new Date().toISOString().split("T")[0];
   const toast = useToast();
 
-  const fetchData = async () => {
-    try {
-      setLoading(true);
-      const [log, exp] = await Promise.all([
-        logService.getLogByDate(today).catch(() => null), // Ignore 404
-        expenseService.getExpensesByDate(today),
-      ]);
+  const fetchDailyData = useCallback(async () => {
+    const [log, exp] = await Promise.all([
+      logService.getLogByDate(today).catch(() => null), // Ignore 404
+      expenseService.getExpensesByDate(today),
+    ]);
+    return { log, exp };
+  }, [today]);
 
-      if (log) setLogData(log);
-      setExpenses(exp || []);
-    } catch (error) {
-      console.error("Error fetching daily data:", error);
-      toast.error("Error al cargar datos diarios");
-    } finally {
-      setLoading(false);
-    }
-  };
+  const { data, refetch } = useFetch(fetchDailyData, [fetchDailyData], {
+    errorMessage: "Error al cargar datos diarios",
+  });
 
   useEffect(() => {
-    fetchData();
-  }, []);
+    if (data) {
+      if (data.log) setLogData(data.log);
+      setExpenses(data.exp || []);
+    }
+  }, [data]);
 
   const handleSaveLog = async (data) => {
     try {
@@ -53,7 +50,7 @@ const DailyEntry = () => {
   const handleAddExpense = async (expense) => {
     try {
       await expenseService.addExpense(expense);
-      await fetchData(); // Refresh list
+      await refetch();
       toast.success("Gasto agregado");
       return true;
     } catch (error) {
@@ -67,7 +64,7 @@ const DailyEntry = () => {
     if (!window.confirm("¿Eliminar este gasto?")) return;
     try {
       await expenseService.deleteExpense(id);
-      await fetchData();
+      await refetch();
       toast.success("Gasto eliminado");
     } catch (error) {
       console.error("Error deleting expense:", error);
