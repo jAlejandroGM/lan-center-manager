@@ -115,11 +115,6 @@ const ExpenseForm = ({ expenses, onAdd, onDelete }) => {
             </div>
           </div>
         ))}
-        {expenses.length === 0 && (
-          <p className="text-gray-500 text-center">
-            No expenses recorded today.
-          </p>
-        )}
       </div>
     </div>
   );
