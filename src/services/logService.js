@@ -15,6 +15,22 @@ export const logService = {
     return data;
   },
 
+  async getLogsByMonth(year, month) {
+    // month is 0-indexed (0 = January)
+    const startDate = new Date(year, month, 1).toISOString().split("T")[0];
+    const endDate = new Date(year, month + 1, 0).toISOString().split("T")[0];
+
+    const { data, error } = await supabase
+      .from("daily_logs")
+      .select("*")
+      .gte("date", startDate)
+      .lte("date", endDate)
+      .order("date", { ascending: true });
+
+    if (error) throw error;
+    return data;
+  },
+
   async upsertLog(logData) {
     const { data, error } = await supabase
       .from("daily_logs")

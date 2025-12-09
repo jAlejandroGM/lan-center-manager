@@ -1,7 +1,13 @@
 import React from "react";
 import { Outlet, Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../../hooks/useAuth";
-import { LogOut, LayoutDashboard, Wallet, FileText } from "lucide-react";
+import {
+  LogOut,
+  LayoutDashboard,
+  Wallet,
+  FileText,
+  Calendar,
+} from "lucide-react";
 
 const Layout = () => {
   const { logout, user } = useAuth();
@@ -33,6 +39,15 @@ const Layout = () => {
                 >
                   <LayoutDashboard className="w-5 h-5" />
                   <span className="hidden md:inline">Panel Principal</span>
+                </Link>
+              </li>
+              <li>
+                <Link
+                  to="/history"
+                  className="flex items-center gap-2 px-3 py-2 rounded hover:bg-gray-700 transition-colors"
+                >
+                  <Calendar className="w-5 h-5" />
+                  <span className="hidden md:inline">Historial</span>
                 </Link>
               </li>
               <li>

@@ -4,7 +4,7 @@ import { es } from "date-fns/locale";
 import { logService } from "../services/logService";
 import { expenseService } from "../services/expenseService";
 import { debtService } from "../services/debtService";
-import { DEBT_STATUS } from "../constants";
+import MonthYearSelector from "../components/ui/MonthYearSelector";
 import {
   DollarSign,
   TrendingUp,
@@ -13,6 +13,8 @@ import {
 } from "lucide-react";
 
 const Dashboard = () => {
+  const [selectedMonth, setSelectedMonth] = useState(new Date().getMonth());
+  const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
   const [metrics, setMetrics] = useState({
     cashIncome: 0,
     yapeIncome: 0,
@@ -23,47 +25,41 @@ const Dashboard = () => {
     netTotal: 0,
   });
   const [loading, setLoading] = useState(true);
-  const today = new Date().toISOString().split("T")[0];
 
   useEffect(() => {
     const fetchDashboardData = async () => {
       try {
         setLoading(true);
 
-        // Fetch all data in parallel
-        const [log, expenses, allDebts] = await Promise.all([
-          logService.getLogByDate(today).catch(() => null),
-          expenseService.getExpensesByDate(today),
-          debtService.getDebts(), // We need to filter paid today
+        const [logs, expenses, paidDebts] = await Promise.all([
+          logService.getLogsByMonth(selectedYear, selectedMonth),
+          expenseService.getExpensesByMonth(selectedYear, selectedMonth),
+          debtService.getPaidDebtsByMonth(selectedYear, selectedMonth),
         ]);
 
-        // Calculate Debts Paid Today
-        // Note: In a real app, we should filter by date in the query, but for now we filter in JS
-        const debtsPaidToday = allDebts
-          .filter(
-            (d) =>
-              d.status === DEBT_STATUS.PAID &&
-              d.paid_at &&
-              d.paid_at.startsWith(today)
-          )
-          .reduce((sum, d) => sum + d.amount, 0);
-
-        // Calculate Expenses
-        const totalExpenses = (expenses || []).reduce(
-          (sum, e) => sum + e.amount,
+        // Calculate Totals
+        const cashIncome = logs.reduce(
+          (sum, log) => sum + (log.cash_income || 0),
+          0
+        );
+        const yapeIncome = logs.reduce(
+          (sum, log) => sum + (log.yape_income || 0),
+          0
+        );
+        const nightShift = logs.reduce(
+          (sum, log) => sum + (log.night_shift_income || 0),
+          0
+        );
+        const shortage = logs.reduce(
+          (sum, log) => sum + (log.shortage_amount || 0),
           0
         );
 
-        // Log Data
-        const cashIncome = log?.cash_income || 0;
-        const yapeIncome = log?.yape_income || 0;
-        const nightShift = log?.night_shift_income || 0;
-        const shortage = log?.shortage_amount || 0;
+        const totalExpenses = expenses.reduce((sum, e) => sum + e.amount, 0);
+        const totalDebtsPaid = paidDebts.reduce((sum, d) => sum + d.amount, 0);
 
-        // Net Total Formula
-        // Total = (cash + yape + night + debts_paid) - (expenses + shortage)
         const totalIncome =
-          cashIncome + yapeIncome + nightShift + debtsPaidToday;
+          cashIncome + yapeIncome + nightShift + totalDebtsPaid;
         const totalOutflow = totalExpenses + shortage;
         const netTotal = totalIncome - totalOutflow;
 
@@ -71,7 +67,7 @@ const Dashboard = () => {
           cashIncome,
           yapeIncome,
           nightShift,
-          debtsPaid: debtsPaidToday,
+          debtsPaid: totalDebtsPaid,
           expenses: totalExpenses,
           shortage,
           netTotal,
@@ -84,7 +80,7 @@ const Dashboard = () => {
     };
 
     fetchDashboardData();
-  }, [today]);
+  }, [selectedMonth, selectedYear]);
 
   const MetricCard = ({ title, value, icon: Icon, color, subtext }) => (
     <div className="bg-gray-800 p-6 rounded-lg border border-gray-700">
@@ -110,13 +106,20 @@ const Dashboard = () => {
 
   return (
     <div className="max-w-6xl mx-auto">
-      <div className="flex justify-between items-center mb-8">
+      <div className="flex flex-col md:flex-row justify-between items-center mb-8 gap-4">
         <h1 className="text-3xl font-bold text-white">Panel Principal</h1>
-        <div className="text-right">
-          <p className="text-gray-400">Resumen de Hoy</p>
-          <p className="text-xl font-bold text-white">
-            {format(new Date(), "EEEE, dd 'de' MMMM", { locale: es })}
-          </p>
+        <div className="flex flex-col md:flex-row items-center gap-4">
+          <div className="text-right">
+            <p className="text-gray-400 text-sm">Resumen Mensual</p>
+          </div>
+          <MonthYearSelector
+            selectedMonth={selectedMonth}
+            selectedYear={selectedYear}
+            onChange={(m, y) => {
+              setSelectedMonth(m);
+              setSelectedYear(y);
+            }}
+          />
         </div>
       </div>
 
@@ -190,14 +193,15 @@ const Dashboard = () => {
             Estado del Sistema
           </h3>
           <p className="text-gray-400">
-            Este panel refleja las operaciones del día actual. Asegúrate de
-            registrar correctamente todos los gastos y deudas para obtener un
-            Total Neto preciso.
+            Este panel refleja las operaciones del{" "}
+            <strong>mes seleccionado</strong>. Asegúrate de registrar
+            correctamente todos los gastos y deudas para obtener un Total Neto
+            preciso.
           </p>
           <div className="mt-6 p-4 bg-blue-900/20 rounded border border-blue-800">
             <p className="text-sm text-blue-300">
-              <strong>Consejo:</strong> Usa la página 'Registro Diario' para
-              ingresar el conteo final de efectivo al cierre del día.
+              <strong>Consejo:</strong> Usa la página 'Historial' para ver el
+              detalle día por día.
             </p>
           </div>
         </div>
