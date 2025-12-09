@@ -19,6 +19,7 @@ const Debts = () => {
   const [selectedMonth, setSelectedMonth] = useState(new Date().getMonth());
   const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
   const [searchTerm, setSearchTerm] = useState("");
+  const [searchInput, setSearchInput] = useState(""); // Local state for input
   const [page, setPage] = useState(1);
   const [totalCount, setTotalCount] = useState(0);
   const pageSize = 5;
@@ -120,18 +121,32 @@ const Debts = () => {
       {canAdd && <DebtForm onAdd={handleAddDebt} loading={loading} />}
 
       <div className="bg-gray-800 p-4 rounded-lg border border-gray-700 mb-6">
-        <div className="relative">
-          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
-          <input
-            type="text"
-            placeholder="Buscar por nombre de cliente..."
-            value={searchTerm}
-            onChange={(e) => {
-              setSearchTerm(e.target.value);
-              setPage(1); // Reset page on search
+        <div className="flex gap-2">
+          <div className="relative flex-1">
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+            <input
+              type="text"
+              placeholder="Buscar por nombre de cliente..."
+              value={searchInput}
+              onChange={(e) => setSearchInput(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") {
+                  setSearchTerm(searchInput);
+                  setPage(1);
+                }
+              }}
+              className="w-full pl-10 p-3 bg-gray-700 border border-gray-600 rounded text-white focus:outline-none focus:border-blue-500"
+            />
+          </div>
+          <button
+            onClick={() => {
+              setSearchTerm(searchInput);
+              setPage(1);
             }}
-            className="w-full pl-10 p-3 bg-gray-700 border border-gray-600 rounded text-white focus:outline-none focus:border-blue-500"
-          />
+            className="bg-blue-600 hover:bg-blue-700 text-white font-bold px-6 rounded transition-colors"
+          >
+            Buscar
+          </button>
         </div>
       </div>
 
