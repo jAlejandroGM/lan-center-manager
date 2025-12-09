@@ -1,0 +1,79 @@
+import React from "react";
+import { format } from "date-fns";
+import { CheckCircle, XCircle, Clock } from "lucide-react";
+import { DEBT_STATUS, ROLES } from "../../constants";
+import { useAuth } from "../../hooks/useAuth";
+
+const DebtList = ({ debts, onPayClick, onCancelClick }) => {
+  const { user } = useAuth();
+  const isAdmin = user?.role === ROLES.ADMIN;
+
+  const getStatusIcon = (status) => {
+    switch (status) {
+      case DEBT_STATUS.PAID:
+        return <CheckCircle className="w-5 h-5 text-green-500" />;
+      case DEBT_STATUS.CANCELLED:
+        return <XCircle className="w-5 h-5 text-red-500" />;
+      default:
+        return <Clock className="w-5 h-5 text-yellow-500" />;
+    }
+  };
+
+  return (
+    <div className="space-y-4">
+      {debts.map((debt) => (
+        <div
+          key={debt.id}
+          className="bg-gray-800 p-4 rounded-lg border border-gray-700 flex justify-between items-center"
+        >
+          <div>
+            <div className="flex items-center gap-2 mb-1">
+              <span className="font-bold text-white text-lg">
+                {debt.customer_name}
+              </span>
+              {getStatusIcon(debt.status)}
+            </div>
+            <div className="text-sm text-gray-400">
+              {format(new Date(debt.created_at), "dd/MM/yyyy HH:mm")}
+            </div>
+            {debt.status === DEBT_STATUS.PAID && (
+              <div className="text-xs text-green-400 mt-1">
+                Paid via {debt.payment_method} on{" "}
+                {format(new Date(debt.paid_at), "dd/MM HH:mm")}
+              </div>
+            )}
+          </div>
+
+          <div className="flex flex-col items-end gap-2">
+            <span className="text-xl font-bold text-blue-400">
+              S/. {debt.amount.toFixed(2)}
+            </span>
+
+            {debt.status === DEBT_STATUS.PENDING && isAdmin && (
+              <div className="flex gap-2">
+                <button
+                  onClick={() => onPayClick(debt)}
+                  className="px-3 py-1 bg-green-600 hover:bg-green-700 text-white text-sm rounded transition-colors"
+                >
+                  Pay
+                </button>
+                <button
+                  onClick={() => onCancelClick(debt.id)}
+                  className="px-3 py-1 bg-red-600 hover:bg-red-700 text-white text-sm rounded transition-colors"
+                >
+                  Cancel
+                </button>
+              </div>
+            )}
+          </div>
+        </div>
+      ))}
+
+      {debts.length === 0 && (
+        <div className="text-center text-gray-500 py-8">No debts found.</div>
+      )}
+    </div>
+  );
+};
+
+export default DebtList;
