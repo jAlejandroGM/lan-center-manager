@@ -11,7 +11,7 @@ const ExpenseForm = ({ expenses, onAdd, onDelete }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!amount) return;
+    if (!amount || parseFloat(amount) < 0) return;
 
     setIsSubmitting(true);
     const success = await onAdd({
@@ -65,6 +65,7 @@ const ExpenseForm = ({ expenses, onAdd, onDelete }) => {
           onChange={(e) => setAmount(e.target.value)}
           className="p-2 bg-gray-700 border border-gray-600 rounded text-white"
           step="0.10"
+          min="0"
           required
         />
 

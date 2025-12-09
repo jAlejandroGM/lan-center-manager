@@ -14,7 +14,7 @@ const DailyLogForm = ({ initialData, onSave, loading }) => {
     const { name, value } = e.target;
     setFormData((prev) => ({
       ...prev,
-      [name]: name === "notes" ? value : parseFloat(value) || 0,
+      [name]: name === "notes" ? value : Math.max(0, parseFloat(value) || 0),
     }));
   };
 
@@ -44,6 +44,7 @@ const DailyLogForm = ({ initialData, onSave, loading }) => {
             onChange={handleChange}
             className="w-full p-3 bg-gray-700 border border-gray-600 rounded text-white text-lg"
             step="0.10"
+            min="0"
           />
         </div>
 
@@ -58,6 +59,7 @@ const DailyLogForm = ({ initialData, onSave, loading }) => {
             onChange={handleChange}
             className="w-full p-3 bg-gray-700 border border-gray-600 rounded text-white text-lg"
             step="0.10"
+            min="0"
           />
         </div>
 
@@ -72,6 +74,7 @@ const DailyLogForm = ({ initialData, onSave, loading }) => {
             onChange={handleChange}
             className="w-full p-3 bg-gray-700 border border-gray-600 rounded text-white text-lg"
             step="0.10"
+            min="0"
           />
         </div>
 
@@ -86,6 +89,7 @@ const DailyLogForm = ({ initialData, onSave, loading }) => {
             onChange={handleChange}
             className="w-full p-3 bg-gray-700 border border-red-500/50 rounded text-white text-lg"
             step="0.10"
+            min="0"
           />
         </div>
 
