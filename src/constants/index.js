@@ -1,0 +1,23 @@
+export const ROLES = {
+  VIEWER: "VIEWER",
+  WORKER: "WORKER",
+  ADMIN: "ADMIN",
+};
+
+export const EXPENSE_CATEGORIES = {
+  STAFF_PAYMENT: "STAFF_PAYMENT",
+  SUPPLIES: "SUPPLIES",
+  SERVICES: "SERVICES",
+  OTHER: "OTHER",
+};
+
+export const DEBT_STATUS = {
+  PENDING: "PENDING",
+  PAID: "PAID",
+  CANCELLED: "CANCELLED",
+};
+
+export const PAYMENT_METHODS = {
+  CASH: "CASH",
+  YAPE: "YAPE",
+};
