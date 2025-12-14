@@ -11,15 +11,15 @@ const Toast = ({ id, message, type, onClose }) => {
   }, [id, onClose]);
 
   const icons = {
-    success: <CheckCircle className="w-5 h-5 text-green-500" />,
-    error: <AlertCircle className="w-5 h-5 text-red-500" />,
-    info: <Info className="w-5 h-5 text-blue-500" />,
+    success: <CheckCircle className="w-5 h-5 text-emerald-500" />,
+    error: <AlertCircle className="w-5 h-5 text-rose-500" />,
+    info: <Info className="w-5 h-5 text-indigo-500" />,
   };
 
   const bgColors = {
-    success: "bg-gray-800 border-green-500/50",
-    error: "bg-gray-800 border-red-500/50",
-    info: "bg-gray-800 border-blue-500/50",
+    success: "bg-gray-800 border-emerald-500/50",
+    error: "bg-gray-800 border-rose-500/50",
+    info: "bg-gray-800 border-indigo-500/50",
   };
 
   return (
@@ -30,7 +30,7 @@ const Toast = ({ id, message, type, onClose }) => {
       <p className="text-white text-sm flex-1">{message}</p>
       <button
         onClick={() => onClose(id)}
-        className="text-gray-400 hover:text-white"
+        className="text-gray-400 hover:text-white cursor-pointer"
       >
         <X className="w-4 h-4" />
       </button>

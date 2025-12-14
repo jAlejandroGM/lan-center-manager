@@ -17,7 +17,7 @@ const MonthYearSelector = ({ selectedMonth, selectedYear, onChange }) => {
   ];
 
   const currentYear = new Date().getFullYear();
-  const years = Array.from({ length: 5 }, (_, i) => currentYear - i); // Last 5 years
+  const years = Array.from({ length: 2 }, (_, i) => currentYear + i);
 
   const handleMonthChange = (e) => {
     onChange(parseInt(e.target.value), selectedYear);
@@ -32,7 +32,7 @@ const MonthYearSelector = ({ selectedMonth, selectedYear, onChange }) => {
       <select
         value={selectedMonth}
         onChange={handleMonthChange}
-        className="bg-gray-700 text-white border border-gray-600 rounded p-2 focus:outline-none focus:border-blue-500"
+        className="bg-gray-700 text-white border border-gray-600 rounded p-2 focus:outline-none focus:border-indigo-500"
       >
         {months.map((month) => (
           <option key={month.value} value={month.value}>
@@ -43,7 +43,7 @@ const MonthYearSelector = ({ selectedMonth, selectedYear, onChange }) => {
       <select
         value={selectedYear}
         onChange={handleYearChange}
-        className="bg-gray-700 text-white border border-gray-600 rounded p-2 focus:outline-none focus:border-blue-500"
+        className="bg-gray-700 text-white border border-gray-600 rounded p-2 focus:outline-none focus:border-indigo-500"
       >
         {years.map((year) => (
           <option key={year} value={year}>

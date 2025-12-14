@@ -1,18 +1,31 @@
 import { EXPENSE_CATEGORIES } from "../constants";
 
 export const calculateDailyTotals = (
-  log = {},
+  logs = [],
   expenses = [],
   paidDebts = []
 ) => {
-  const safeLog = log || {};
+  const safeLogs = Array.isArray(logs) ? logs : [];
   const safeExpenses = Array.isArray(expenses) ? expenses : [];
   const safePaidDebts = Array.isArray(paidDebts) ? paidDebts : [];
 
-  const cashFromLog = safeLog.cash_income || 0;
-  const yapeFromLog = safeLog.yape_income || 0;
-  const nightShift = safeLog.night_shift_income || 0;
-  const shortage = safeLog.shortage_amount || 0;
+  // Sum up all logs for the day
+  const cashFromLog = safeLogs.reduce(
+    (sum, log) => sum + (log.cash_income || 0),
+    0
+  );
+  const yapeFromLog = safeLogs.reduce(
+    (sum, log) => sum + (log.yape_income || 0),
+    0
+  );
+  const nightShift = safeLogs.reduce(
+    (sum, log) => sum + (log.night_shift_income || 0),
+    0
+  );
+  const shortage = safeLogs.reduce(
+    (sum, log) => sum + (log.shortage_amount || 0),
+    0
+  );
 
   // Distribute debt payments
   const debtsCash = safePaidDebts

@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../hooks/useAuth";
 import { Lock } from "lucide-react";
+import { ROLES } from "../constants";
 
 const Login = () => {
   const [pin, setPin] = useState("");
@@ -11,8 +12,13 @@ const Login = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (login(pin)) {
-      navigate("/dashboard");
+    const role = login(pin);
+    if (role) {
+      if (role === ROLES.WORKER) {
+        navigate("/debts");
+      } else {
+        navigate("/dashboard");
+      }
     } else {
       setError("PIN Inválido");
       setPin("");
@@ -23,7 +29,7 @@ const Login = () => {
     <div className="flex items-center justify-center h-screen bg-gray-900 text-white">
       <div className="bg-gray-800 p-8 rounded-lg shadow-lg w-full max-w-md border border-gray-700">
         <div className="flex justify-center mb-6">
-          <div className="p-3 bg-blue-600 rounded-full">
+          <div className="p-3 bg-indigo-600 rounded-full">
             <Lock className="w-8 h-8 text-white" />
           </div>
         </div>
@@ -40,7 +46,7 @@ const Login = () => {
               type="password"
               value={pin}
               onChange={(e) => setPin(e.target.value)}
-              className="w-full p-3 bg-gray-700 border border-gray-600 rounded text-center text-2xl tracking-widest focus:outline-none focus:border-blue-500 transition-colors"
+              className="w-full p-3 bg-gray-700 border border-gray-600 rounded text-center text-2xl tracking-widest focus:outline-none focus:border-indigo-500 transition-colors"
               placeholder="••••"
               maxLength={4}
               autoFocus
@@ -48,14 +54,14 @@ const Login = () => {
           </div>
 
           {error && (
-            <div className="text-red-400 text-center text-sm bg-red-900/20 p-2 rounded">
+            <div className="text-rose-400 text-center text-sm bg-rose-900/20 p-2 rounded">
               {error}
             </div>
           )}
 
           <button
             type="submit"
-            className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 rounded transition-colors"
+            className="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 rounded transition-colors cursor-pointer"
           >
             Ingresar
           </button>

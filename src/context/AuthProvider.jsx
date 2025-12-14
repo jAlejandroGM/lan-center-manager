@@ -21,9 +21,9 @@ export const AuthProvider = ({ children }) => {
     if (role) {
       sessionStorage.setItem("lan_center_role", role);
       setUser({ role });
-      return true;
+      return role;
     }
-    return false;
+    return null;
   };
 
   const logout = () => {

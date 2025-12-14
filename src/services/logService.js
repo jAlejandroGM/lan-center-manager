@@ -1,17 +1,14 @@
 import { supabase } from "./supabase";
 
 export const logService = {
-  async getLogByDate(date) {
+  async getLogsByDate(date) {
     const { data, error } = await supabase
       .from("daily_logs")
       .select("*")
       .eq("date", date)
-      .single();
+      .order("created_at", { ascending: true });
 
-    if (error && error.code !== "PGRST116") {
-      // PGRST116 is "Row not found"
-      throw error;
-    }
+    if (error) throw error;
     return data;
   },
 
@@ -31,10 +28,10 @@ export const logService = {
     return data;
   },
 
-  async upsertLog(logData) {
+  async addLog(logData) {
     const { data, error } = await supabase
       .from("daily_logs")
-      .upsert(logData, { onConflict: "date" })
+      .insert(logData)
       .select()
       .single();
 

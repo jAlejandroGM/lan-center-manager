@@ -21,8 +21,17 @@ function App() {
 
             <Route element={<ProtectedRoute />}>
               <Route element={<Layout />}>
-                <Route path="/dashboard" element={<Dashboard />} />
-                <Route path="/history" element={<History />} />
+                <Route
+                  element={
+                    <ProtectedRoute
+                      allowedRoles={[ROLES.ADMIN, ROLES.VIEWER]}
+                    />
+                  }
+                >
+                  <Route path="/dashboard" element={<Dashboard />} />
+                  <Route path="/history" element={<History />} />
+                </Route>
+
                 <Route path="/debts" element={<Debts />} />
 
                 {/* Admin Only Routes */}

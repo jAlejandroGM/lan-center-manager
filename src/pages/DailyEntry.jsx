@@ -10,17 +10,17 @@ const DailyEntry = () => {
   const [selectedDate, setSelectedDate] = useState(
     new Date().toISOString().split("T")[0]
   );
-  const [logData, setLogData] = useState(null);
+  // const [logData, setLogData] = useState(null); // Removed as we don't edit single logs anymore
   const [expenses, setExpenses] = useState([]);
   const [savingLog, setSavingLog] = useState(false);
   const toast = useToast();
 
   const fetchDailyData = useCallback(async () => {
-    const [log, exp] = await Promise.all([
-      logService.getLogByDate(selectedDate).catch(() => null), // Ignore 404
+    const [logs, exp] = await Promise.all([
+      logService.getLogsByDate(selectedDate),
       expenseService.getExpensesByDate(selectedDate),
     ]);
-    return { log, exp };
+    return { logs, exp };
   }, [selectedDate]);
 
   const { data, refetch } = useFetch(fetchDailyData, [fetchDailyData], {
@@ -29,24 +29,23 @@ const DailyEntry = () => {
 
   useEffect(() => {
     if (data) {
-      setLogData(data.log || null);
       setExpenses(data.exp || []);
     } else {
-      // Reset when loading new data
-      setLogData(null);
       setExpenses([]);
     }
   }, [data]);
 
-  const handleSaveLog = async (data) => {
+  const handleSaveLog = async (formData) => {
     try {
       setSavingLog(true);
-      const savedLog = await logService.upsertLog({
-        ...data,
+      // Always add a new log entry
+      await logService.addLog({
+        ...formData,
         date: selectedDate,
       });
-      setLogData(savedLog);
-      toast.success("Registro diario guardado exitosamente!");
+
+      toast.success("Registro agregado exitosamente!");
+      await refetch();
     } catch (error) {
       console.error("Error saving log:", error);
       toast.error("Error al guardar registro.");
@@ -96,8 +95,8 @@ const DailyEntry = () => {
       </div>
 
       <DailyLogForm
-        key={logData ? logData.id : `new-${selectedDate}`}
-        initialData={logData}
+        key={`new-entry-${selectedDate}-${Date.now()}`}
+        initialData={null}
         onSave={handleSaveLog}
         loading={savingLog}
       />
