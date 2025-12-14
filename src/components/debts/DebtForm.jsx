@@ -4,6 +4,13 @@ import { PlusCircle } from "lucide-react";
 const DebtForm = ({ onAdd, loading }) => {
   const [name, setName] = useState("");
   const [amount, setAmount] = useState("");
+  const [date, setDate] = useState(() => {
+    const now = new Date();
+    const year = now.getFullYear();
+    const month = String(now.getMonth() + 1).padStart(2, "0");
+    const day = String(now.getDate()).padStart(2, "0");
+    return `${year}-${month}-${day}`;
+  });
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -12,6 +19,7 @@ const DebtForm = ({ onAdd, loading }) => {
     const success = await onAdd({
       customer_name: name,
       amount: parseFloat(amount),
+      created_at: date,
     });
 
     if (success) {
@@ -31,6 +39,13 @@ const DebtForm = ({ onAdd, loading }) => {
       </h3>
       <div className="flex flex-col md:flex-row gap-4">
         <input
+          type="date"
+          value={date}
+          onChange={(e) => setDate(e.target.value)}
+          className="p-2 bg-gray-700 border border-gray-600 rounded text-white focus:outline-none focus:border-blue-500"
+          required
+        />
+        <input
           type="text"
           placeholder="Nombre del Cliente"
           value={name}
@@ -42,16 +57,21 @@ const DebtForm = ({ onAdd, loading }) => {
           type="number"
           placeholder="Monto (S/.)"
           value={amount}
-          onChange={(e) => setAmount(e.target.value)}
+          onChange={(e) => {
+            const val = e.target.value;
+            if (val === "" || /^\d*\.?\d{0,1}$/.test(val)) {
+              setAmount(val);
+            }
+          }}
           className="w-full md:w-32 p-2 bg-gray-700 border border-gray-600 rounded text-white focus:outline-none focus:border-blue-500"
-          step="0.10"
+          step="0.1"
           min="0"
           required
         />
         <button
           type="submit"
           disabled={loading}
-          className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-6 rounded transition-colors disabled:opacity-50"
+          className="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-6 rounded transition-colors disabled:opacity-50 cursor-pointer"
         >
           {loading ? "Agregando..." : "Agregar"}
         </button>

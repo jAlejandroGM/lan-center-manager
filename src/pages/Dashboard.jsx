@@ -81,6 +81,7 @@ const Dashboard = () => {
     fetchDashboardData();
   }, [selectedMonth, selectedYear]);
 
+  // eslint-disable-next-line no-unused-vars
   const MetricCard = ({ title, value, icon: Icon, color, subtext }) => (
     <div className="bg-gray-800 p-6 rounded-lg border border-gray-700">
       <div className="flex justify-between items-start mb-4">
@@ -130,20 +131,22 @@ const Dashboard = () => {
             title="Total Ingresos"
             value={metrics.totalIncome}
             icon={DollarSign}
-            color="text-green-400"
-            subtext="Ingresos Brutos (Efectivo + Yape + Amanecidas)"
+            color="text-emerald-400"
+            subtext="Efectivo + Yape + Amanecidas + Deudas pagadas"
           />
           <MetricCard
-            title="Gastos Totales"
+            title="Total Gastos"
             value={metrics.expenses}
             icon={TrendingDown}
-            color="text-red-400"
+            color="text-yellow-400"
+            subtext="Pagos al Staff + Gatos en Suministros"
           />
           <MetricCard
-            title="Faltante"
+            title="Dinero Faltante"
             value={metrics.shortage}
             icon={AlertCircle}
-            color="text-yellow-400"
+            color="text-rose-400"
+            subtext="Descuadre de caja sin justificación"
           />
         </div>
       )}
@@ -166,7 +169,7 @@ const Dashboard = () => {
                 S/. {metrics.yapeIncome.toFixed(2)}
               </span>
             </div>
-            <div className="flex justify-between items-center pt-2">
+            <div className="flex justify-between items-center">
               <span className="text-gray-300">Amanecidas</span>
               <span className="text-white font-bold">
                 S/. {metrics.nightShift.toFixed(2)}
@@ -185,8 +188,8 @@ const Dashboard = () => {
             correctamente todos los gastos y deudas para obtener un Total Neto
             preciso.
           </p>
-          <div className="mt-6 p-4 bg-blue-900/20 rounded border border-blue-800">
-            <p className="text-sm text-blue-300">
+          <div className="mt-6 p-4 bg-indigo-900/20 rounded border border-indigo-800">
+            <p className="text-sm text-indigo-300">
               <strong>Consejo:</strong> Usa la página 'Historial' para ver el
               detalle día por día.
             </p>

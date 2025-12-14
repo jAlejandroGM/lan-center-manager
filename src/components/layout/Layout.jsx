@@ -1,6 +1,7 @@
 import React from "react";
 import { Outlet, Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../../hooks/useAuth";
+import { ROLES } from "../../constants";
 import {
   LogOut,
   LayoutDashboard,
@@ -23,7 +24,7 @@ const Layout = () => {
     <div className="min-h-screen bg-gray-900 text-gray-100 font-sans">
       <header className="bg-gray-800 p-4 border-b border-gray-700 sticky top-0 z-10">
         <div className="container mx-auto flex justify-between items-center">
-          <div className="font-bold text-xl text-blue-400 flex items-center gap-2">
+          <div className="font-bold text-xl text-indigo-400 flex items-center gap-2">
             <span className="hidden md:inline">LAN Center Manager</span>
             <span className="md:hidden">LCM</span>
             <span className="text-xs bg-gray-700 text-gray-300 px-2 py-1 rounded ml-2">
@@ -32,24 +33,28 @@ const Layout = () => {
           </div>
           <nav>
             <ul className="flex space-x-1 md:space-x-4">
-              <li>
-                <Link
-                  to="/dashboard"
-                  className="flex items-center gap-2 px-3 py-2 rounded hover:bg-gray-700 transition-colors"
-                >
-                  <LayoutDashboard className="w-5 h-5" />
-                  <span className="hidden md:inline">Panel Principal</span>
-                </Link>
-              </li>
-              <li>
-                <Link
-                  to="/history"
-                  className="flex items-center gap-2 px-3 py-2 rounded hover:bg-gray-700 transition-colors"
-                >
-                  <Calendar className="w-5 h-5" />
-                  <span className="hidden md:inline">Historial</span>
-                </Link>
-              </li>
+              {user?.role !== ROLES.WORKER && (
+                <>
+                  <li>
+                    <Link
+                      to="/dashboard"
+                      className="flex items-center gap-2 px-3 py-2 rounded hover:bg-gray-700 transition-colors"
+                    >
+                      <LayoutDashboard className="w-5 h-5" />
+                      <span className="hidden md:inline">Panel Principal</span>
+                    </Link>
+                  </li>
+                  <li>
+                    <Link
+                      to="/history"
+                      className="flex items-center gap-2 px-3 py-2 rounded hover:bg-gray-700 transition-colors"
+                    >
+                      <Calendar className="w-5 h-5" />
+                      <span className="hidden md:inline">Historial</span>
+                    </Link>
+                  </li>
+                </>
+              )}
               <li>
                 <Link
                   to="/debts"
@@ -73,7 +78,7 @@ const Layout = () => {
               <li>
                 <button
                   onClick={handleLogout}
-                  className="flex items-center gap-2 px-3 py-2 rounded text-red-400 hover:bg-red-900/20 hover:text-red-300 transition-colors"
+                  className="flex items-center gap-2 px-3 py-2 rounded text-rose-400 hover:bg-rose-900/20 hover:text-rose-300 transition-colors cursor-pointer"
                 >
                   <LogOut className="w-5 h-5" />
                   <span className="hidden md:inline">Salir</span>

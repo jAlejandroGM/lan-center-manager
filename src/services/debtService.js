@@ -50,9 +50,17 @@ export const debtService = {
   },
 
   async addDebt(debt) {
+    // If created_at is provided, use it, otherwise default to now (handled by DB or here)
+    // But if we pass created_at, we should ensure it's in the correct format.
+    // The DB default is now(), but we can override it.
+
     const { data, error } = await supabase
       .from("debts")
-      .insert({ ...debt, status: DEBT_STATUS.PENDING })
+      .insert({
+        ...debt,
+        status: DEBT_STATUS.PENDING,
+        // Ensure created_at is set if passed, otherwise let DB handle it
+      })
       .select()
       .single();
 

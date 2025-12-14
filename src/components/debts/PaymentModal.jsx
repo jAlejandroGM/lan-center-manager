@@ -10,7 +10,10 @@ const PaymentModal = ({ isOpen, onClose, onConfirm, debt }) => {
       <div className="bg-gray-800 rounded-lg shadow-xl w-full max-w-sm border border-gray-700">
         <div className="flex justify-between items-center p-4 border-b border-gray-700">
           <h3 className="text-lg font-bold text-white">Confirmar Pago</h3>
-          <button onClick={onClose} className="text-gray-400 hover:text-white">
+          <button
+            onClick={onClose}
+            className="text-gray-400 hover:text-white cursor-pointer"
+          >
             <X className="w-5 h-5" />
           </button>
         </div>
@@ -26,13 +29,13 @@ const PaymentModal = ({ isOpen, onClose, onConfirm, debt }) => {
           <div className="grid grid-cols-2 gap-4">
             <button
               onClick={() => onConfirm(debt.id, PAYMENT_METHODS.CASH)}
-              className="bg-green-600 hover:bg-green-700 text-white font-bold py-3 rounded transition-colors"
+              className="bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3 rounded transition-colors cursor-pointer"
             >
               EFECTIVO
             </button>
             <button
               onClick={() => onConfirm(debt.id, PAYMENT_METHODS.YAPE)}
-              className="bg-purple-600 hover:bg-purple-700 text-white font-bold py-3 rounded transition-colors"
+              className="bg-violet-600 hover:bg-violet-700 text-white font-bold py-3 rounded transition-colors cursor-pointer"
             >
               YAPE
             </button>

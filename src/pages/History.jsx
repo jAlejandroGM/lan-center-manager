@@ -28,18 +28,19 @@ const History = () => {
     });
 
     const data = days.map((date) => {
-      const log = logs.find((l) => l.date === date) || {};
+      // Filter logs for this specific date
+      const dayLogs = logs.filter((l) => l.date === date);
       const dayExpenses = expenses.filter((e) => e.date === date);
       const dayDebts = paidDebts.filter(
         (d) => d.paid_at && d.paid_at.startsWith(date)
       );
 
-      const totals = calculateDailyTotals(log, dayExpenses, dayDebts);
+      const totals = calculateDailyTotals(dayLogs, dayExpenses, dayDebts);
 
       return {
         date,
         ...totals,
-        hasLog: !!log.id,
+        hasLog: dayLogs.length > 0,
       };
     });
 
@@ -104,23 +105,21 @@ const History = () => {
             <thead className="bg-gray-900 text-gray-200 uppercase font-medium">
               <tr>
                 <th className="px-4 py-3">Fecha</th>
-                <th className="px-4 py-3 text-right text-green-400">
+                <th className="px-4 py-3 text-right text-emerald-400">
                   Efectivo
                 </th>
-                <th className="px-4 py-3 text-right text-purple-400">Yape</th>
-                <th className="px-4 py-3 text-right text-blue-400">
+                <th className="px-4 py-3 text-right text-violet-400">Yape</th>
+                <th className="px-4 py-3 text-right text-indigo-400">
                   Amanecida
                 </th>
                 <th className="px-4 py-3 text-right font-bold text-white">
                   Total
                 </th>
-                <th className="px-4 py-3 text-right text-red-400">
+                <th className="px-4 py-3 text-right text-rose-400">Faltante</th>
+                <th className="px-4 py-3 text-right text-orange-400">
                   Pagos Staff
                 </th>
-                <th className="px-4 py-3 text-right text-red-300">Varios</th>
-                <th className="px-4 py-3 text-right text-orange-400">
-                  Faltante
-                </th>
+                <th className="px-4 py-3 text-right text-gray-300">Varios</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-700">
@@ -139,8 +138,8 @@ const History = () => {
               ) : (
                 historyData.map((row) => (
                   <tr key={row.date} className="hover:bg-gray-750">
-                    <td className="px-4 py-3 font-medium text-white whitespace-nowrap">
-                      {format(new Date(row.date + "T00:00:00"), "dd MMM, EEE", {
+                    <td className="px-4 py-3 font-medium text-white whitespace-nowrap capitalize">
+                      {format(new Date(row.date + "T00:00:00"), "EEEE d", {
                         locale: es,
                       })}
                     </td>
@@ -156,14 +155,14 @@ const History = () => {
                     <td className="px-4 py-3 text-right font-bold text-white">
                       S/. {row.totalIncome.toFixed(2)}
                     </td>
-                    <td className="px-4 py-3 text-right">
+                    <td className="px-4 py-3 text-right text-rose-400">
+                      {row.shortage.toFixed(2)}
+                    </td>
+                    <td className="px-4 py-3 text-right text-orange-400">
                       {row.staffPayment.toFixed(2)}
                     </td>
-                    <td className="px-4 py-3 text-right">
+                    <td className="px-4 py-3 text-right text-gray-300">
                       {row.otherExpenses.toFixed(2)}
-                    </td>
-                    <td className="px-4 py-3 text-right">
-                      {row.shortage.toFixed(2)}
                     </td>
                   </tr>
                 ))
@@ -172,26 +171,26 @@ const History = () => {
               {!loading && historyData.length > 0 && (
                 <tr className="bg-gray-900 font-bold border-t-2 border-gray-600">
                   <td className="px-4 py-3 text-white">TOTALES</td>
-                  <td className="px-4 py-3 text-right text-green-400">
+                  <td className="px-4 py-3 text-right text-emerald-400">
                     {totals.cashIncome.toFixed(2)}
                   </td>
-                  <td className="px-4 py-3 text-right text-purple-400">
+                  <td className="px-4 py-3 text-right text-violet-400">
                     {totals.yapeIncome.toFixed(2)}
                   </td>
-                  <td className="px-4 py-3 text-right text-blue-400">
+                  <td className="px-4 py-3 text-right text-indigo-400">
                     {totals.nightShift.toFixed(2)}
                   </td>
                   <td className="px-4 py-3 text-right text-white">
                     S/. {totals.totalIncome.toFixed(2)}
                   </td>
-                  <td className="px-4 py-3 text-right text-red-400">
-                    {totals.staffPayment.toFixed(2)}
-                  </td>
-                  <td className="px-4 py-3 text-right text-red-300">
-                    {totals.otherExpenses.toFixed(2)}
+                  <td className="px-4 py-3 text-right text-rose-400">
+                    {totals.shortage.toFixed(2)}
                   </td>
                   <td className="px-4 py-3 text-right text-orange-400">
-                    {totals.shortage.toFixed(2)}
+                    {totals.staffPayment.toFixed(2)}
+                  </td>
+                  <td className="px-4 py-3 text-right text-gray-300">
+                    {totals.otherExpenses.toFixed(2)}
                   </td>
                 </tr>
               )}

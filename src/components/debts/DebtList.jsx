@@ -7,13 +7,15 @@ import { useAuth } from "../../hooks/useAuth";
 const DebtList = ({ debts, onPayClick, onCancelClick }) => {
   const { user } = useAuth();
   const isAdmin = user?.role === ROLES.ADMIN;
+  const isWorker = user?.role === ROLES.WORKER;
+  const canPay = isAdmin || isWorker;
 
   const getStatusIcon = (status) => {
     switch (status) {
       case DEBT_STATUS.PAID:
-        return <CheckCircle className="w-5 h-5 text-green-500" />;
+        return <CheckCircle className="w-5 h-5 text-emerald-500" />;
       case DEBT_STATUS.CANCELLED:
-        return <XCircle className="w-5 h-5 text-red-500" />;
+        return <XCircle className="w-5 h-5 text-rose-500" />;
       default:
         return <Clock className="w-5 h-5 text-yellow-500" />;
     }
@@ -37,7 +39,7 @@ const DebtList = ({ debts, onPayClick, onCancelClick }) => {
               {format(new Date(debt.created_at), "dd/MM/yyyy HH:mm")}
             </div>
             {debt.status === DEBT_STATUS.PAID && (
-              <div className="text-xs text-green-400 mt-1">
+              <div className="text-xs text-emerald-400 mt-1">
                 Pagado vía{" "}
                 {PAYMENT_METHOD_LABELS[debt.payment_method] ||
                   debt.payment_method}{" "}
@@ -47,24 +49,26 @@ const DebtList = ({ debts, onPayClick, onCancelClick }) => {
           </div>
 
           <div className="flex flex-col items-end gap-2">
-            <span className="text-xl font-bold text-blue-400">
+            <span className="text-xl font-bold text-indigo-400">
               S/. {debt.amount.toFixed(2)}
             </span>
 
-            {debt.status === DEBT_STATUS.PENDING && isAdmin && (
+            {debt.status === DEBT_STATUS.PENDING && canPay && (
               <div className="flex gap-2">
                 <button
                   onClick={() => onPayClick(debt)}
-                  className="px-3 py-1 bg-green-600 hover:bg-green-700 text-white text-sm rounded transition-colors"
+                  className="px-3 py-1 bg-emerald-600 hover:bg-emerald-700 text-white text-sm rounded transition-colors cursor-pointer"
                 >
                   Pagar
                 </button>
-                <button
-                  onClick={() => onCancelClick(debt.id)}
-                  className="px-3 py-1 bg-red-600 hover:bg-red-700 text-white text-sm rounded transition-colors"
-                >
-                  Anular
-                </button>
+                {isAdmin && (
+                  <button
+                    onClick={() => onCancelClick(debt.id)}
+                    className="px-3 py-1 bg-rose-600 hover:bg-rose-700 text-white text-sm rounded transition-colors cursor-pointer"
+                  >
+                    Anular
+                  </button>
+                )}
               </div>
             )}
           </div>
