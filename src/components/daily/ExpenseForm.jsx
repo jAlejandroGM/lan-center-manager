@@ -1,8 +1,8 @@
 import React, { useState } from "react";
-import { Plus, Trash2 } from "lucide-react";
+import { Plus } from "lucide-react";
 import { EXPENSE_CATEGORIES, EXPENSE_LABELS } from "../../constants";
 
-const ExpenseForm = ({ expenses, onAdd, onDelete }) => {
+const ExpenseForm = ({ onAdd }) => {
   const [category, setCategory] = useState(EXPENSE_CATEGORIES.OTHER);
   const [detail, setDetail] = useState("");
   const [amount, setAmount] = useState("");
@@ -97,33 +97,6 @@ const ExpenseForm = ({ expenses, onAdd, onDelete }) => {
           {isSubmitting ? "Agregando..." : "Agregar"}
         </button>
       </form>
-
-      <div className="space-y-2">
-        {expenses.map((expense) => (
-          <div
-            key={expense.id}
-            className="flex justify-between items-center bg-gray-700 p-3 rounded"
-          >
-            <div>
-              <div className="font-bold text-white">
-                {EXPENSE_LABELS[expense.category] || expense.category}
-              </div>
-              <div className="text-sm text-gray-400">{expense.detail}</div>
-            </div>
-            <div className="flex items-center gap-4">
-              <span className="font-bold text-rose-400">
-                - S/. {expense.amount.toFixed(2)}
-              </span>
-              <button
-                onClick={() => onDelete(expense.id)}
-                className="text-gray-400 hover:text-rose-500 cursor-pointer transition-colors"
-              >
-                <Trash2 className="w-4 h-4" />
-              </button>
-            </div>
-          </div>
-        ))}
-      </div>
     </div>
   );
 };
