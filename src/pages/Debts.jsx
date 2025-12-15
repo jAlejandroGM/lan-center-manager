@@ -17,9 +17,8 @@ const Debts = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  // Filters
-  const [searchInput, setSearchInput] = useState(""); // Local state for input
-  // Usamos debounce de 500ms para evitar llamadas excesivas al servidor
+  const [searchInput, setSearchInput] = useState("");
+
   const debouncedSearchTerm = useDebounce(searchInput, 500);
 
   const [page, setPage] = useState(1);
@@ -43,21 +42,18 @@ const Debts = () => {
     return data;
   }, [debouncedSearchTerm, page]);
 
-  // Resetear página cuando cambia el término de búsqueda
-  // Esto asegura que si estás en la página 5 y buscas algo nuevo, vuelvas a la 1
   useEffect(() => {
     setPage(1);
   }, [debouncedSearchTerm]);
 
   const { loading, refetch } = useFetch(fetchDebts, [fetchDebts], {
     errorMessage: "Error al cargar deudas",
-    cacheKey: `debts_page_${page}_search_${debouncedSearchTerm}`, // Cacheamos por página y búsqueda
+    cacheKey: `debts_page_${page}_search_${debouncedSearchTerm}`,
   });
 
   const handleAddDebt = async (debtData) => {
     setIsSubmitting(true);
     try {
-      // Add debt with the selected date from form but current time to ensure it's visible
       const datePart = debtData.created_at;
       const now = new Date();
       const timeString = now.toTimeString().split(" ")[0]; // HH:MM:SS
@@ -67,7 +63,6 @@ const Debts = () => {
         ...debtData,
         created_at: dateTime.toISOString(),
       });
-      // Invalidamos caché porque hay datos nuevos
       invalidateCache("debts_");
       await refetch();
       toast.success("Deuda agregada exitosamente");
@@ -91,7 +86,6 @@ const Debts = () => {
       await debtService.markAsPaid(id, method);
       setIsModalOpen(false);
       setSelectedDebt(null);
-      // Invalidamos caché porque el estado de una deuda cambió
       invalidateCache("debts_");
       await refetch();
       toast.success("Deuda marcada como pagada");
@@ -106,7 +100,6 @@ const Debts = () => {
       return;
     try {
       await debtService.cancelDebt(id);
-      // Invalidamos caché porque el estado de una deuda cambió
       invalidateCache("debts_");
       await fetchDebts();
       toast.success("Deuda anulada");

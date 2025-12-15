@@ -46,6 +46,14 @@ const DebtList = ({ debts, onPayClick, onCancelClick }) => {
                 el {format(new Date(debt.paid_at), "dd/MM HH:mm")}
               </div>
             )}
+            {debt.status === DEBT_STATUS.PENDING && (
+              <div className="text-xs text-yellow-500 mt-1">
+                Deuda pendiente
+              </div>
+            )}
+            {debt.status === DEBT_STATUS.CANCELLED && (
+              <div className="text-xs text-rose-400 mt-1">Deuda cancelada</div>
+            )}
           </div>
 
           <div className="flex flex-col items-end gap-2">
