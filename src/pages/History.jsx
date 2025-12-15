@@ -1,7 +1,9 @@
 import React, { useState, useCallback } from "react";
 import { format } from "date-fns";
 import { es } from "date-fns/locale";
+import { StickyNote } from "lucide-react";
 import MonthYearSelector from "../components/ui/MonthYearSelector";
+import NoteModal from "../components/ui/NoteModal";
 import { logService } from "../services/logService";
 import { expenseService } from "../services/expenseService";
 import { debtService } from "../services/debtService";
@@ -12,6 +14,7 @@ const History = () => {
   const [selectedMonth, setSelectedMonth] = useState(new Date().getMonth());
   const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
   const [historyData, setHistoryData] = useState([]);
+  const [selectedNote, setSelectedNote] = useState(null);
 
   const fetchHistory = useCallback(async () => {
     const [logs, expenses, paidDebts] = await Promise.all([
@@ -37,10 +40,16 @@ const History = () => {
 
       const totals = calculateDailyTotals(dayLogs, dayExpenses, dayDebts);
 
+      const notes = dayLogs
+        .map((l) => l.notes)
+        .filter((n) => n && n.trim().length > 0)
+        .join("\n\n");
+
       return {
         date,
         ...totals,
         hasLog: dayLogs.length > 0,
+        notes,
       };
     });
 
@@ -120,6 +129,7 @@ const History = () => {
                   Pagos Staff
                 </th>
                 <th className="px-4 py-3 text-right text-gray-300">Varios</th>
+                <th className="px-4 py-3 text-right text-amber-300">Notas</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-700">
@@ -164,6 +174,18 @@ const History = () => {
                     <td className="px-4 py-3 text-right text-gray-300">
                       {row.otherExpenses.toFixed(2)}
                     </td>
+                    <td className="px-4 py-3 text-right">
+                      <button
+                        onClick={() =>
+                          setSelectedNote({ date: row.date, notes: row.notes })
+                        }
+                        disabled={!row.notes}
+                        className="p-1 text-gray-400 hover:text-indigo-400 disabled:opacity-30 disabled:cursor-not-allowed transition-colors cursor-pointer inline-block"
+                        title={row.notes ? "Ver notas" : "Sin notas"}
+                      >
+                        <StickyNote className="w-5 h-5" />
+                      </button>
+                    </td>
                   </tr>
                 ))
               )}
@@ -192,12 +214,20 @@ const History = () => {
                   <td className="px-4 py-3 text-right text-gray-300">
                     {totals.otherExpenses.toFixed(2)}
                   </td>
+                  <td className="px-4 py-3"></td>
                 </tr>
               )}
             </tbody>
           </table>
         </div>
       </div>
+
+      <NoteModal
+        isOpen={!!selectedNote}
+        onClose={() => setSelectedNote(null)}
+        date={selectedNote?.date}
+        notes={selectedNote?.notes}
+      />
     </div>
   );
 };
