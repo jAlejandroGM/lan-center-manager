@@ -39,7 +39,11 @@ const DebtList = ({ debts, onPayClick, onCancelClick }) => {
               {getStatusIcon(debt.status)}
             </div>
             <div className="text-sm text-gray-400">
-              {formatDateForDisplay(debt.date)}
+              {formatDateForDisplay(debt.date)} -{" "}
+              {new Date(debt.created_at).toLocaleTimeString("es-PE", {
+                hour: "2-digit",
+                minute: "2-digit",
+              })}
             </div>
             {debt.status === DEBT_STATUS.PAID && (
               <div className="text-xs text-emerald-400 mt-1">
@@ -49,7 +53,13 @@ const DebtList = ({ debts, onPayClick, onCancelClick }) => {
                 el{" "}
                 {formatDateForDisplay(
                   debt.payment_date || getLimaDateFromISO(debt.paid_at)
-                )}
+                )}{" "}
+                -{" "}
+                {debt.paid_at &&
+                  new Date(debt.paid_at).toLocaleTimeString("es-PE", {
+                    hour: "2-digit",
+                    minute: "2-digit",
+                  })}
               </div>
             )}
             {debt.status === DEBT_STATUS.PENDING && (
@@ -58,7 +68,13 @@ const DebtList = ({ debts, onPayClick, onCancelClick }) => {
               </div>
             )}
             {debt.status === DEBT_STATUS.CANCELLED && (
-              <div className="text-xs text-rose-400 mt-1">Deuda cancelada</div>
+              <div className="text-xs text-rose-400 mt-1">
+                Deuda cancelada -{" "}
+                {new Date(debt.created_at).toLocaleTimeString("es-PE", {
+                  hour: "2-digit",
+                  minute: "2-digit",
+                })}
+              </div>
             )}
           </div>
 
