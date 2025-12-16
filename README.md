@@ -4,11 +4,11 @@
 
 Built on a **Serverless Architecture** using React 19 and Supabase, it enforces strict financial integrity through a "Business Date" vs. "System Date" logic, ensuring that reports remain accurate regardless of when data is entered.
 
-![React](https://img.shields.io/badge/React-19.0-61DAFB?style=flat-square&logo=react&logoColor=black)
-![Vite](https://img.shields.io/badge/Vite-7.0-646CFF?style=flat-square&logo=vite&logoColor=white)
-![TailwindCSS](https://img.shields.io/badge/Tailwind_CSS-4.0-38B2AC?style=flat-square&logo=tailwind-css&logoColor=white)
-![Supabase](https://img.shields.io/badge/Supabase-PostgreSQL-3ECF8E?style=flat-square&logo=supabase&logoColor=white)
-![Status](https://img.shields.io/badge/Status-Production_Ready-success?style=flat-square)
+![React](https://img.shields.io/badge/React-61DAFB?style=flat-square&logo=react&logoColor=black)
+![Vite](https://img.shields.io/badge/Vite-646CFF?style=flat-square&logo=vite&logoColor=white)
+![TailwindCSS](https://img.shields.io/badge/Tailwind_CSS-38B2AC?style=flat-square&logo=tailwind-css&logoColor=white)
+![Supabase](https://img.shields.io/badge/Supabase-3ECF8E?style=flat-square&logo=supabase&logoColor=white)
+![Status](https://img.shields.io/badge/Status-Live-success?style=flat-square)
 ![License](https://img.shields.io/badge/License-Private-red?style=flat-square)
 
 ## Key Features
