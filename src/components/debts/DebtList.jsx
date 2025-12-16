@@ -70,10 +70,15 @@ const DebtList = ({ debts, onPayClick, onCancelClick }) => {
             {debt.status === DEBT_STATUS.CANCELLED && (
               <div className="text-xs text-rose-400 mt-1">
                 Deuda cancelada -{" "}
-                {new Date(debt.created_at).toLocaleTimeString("es-PE", {
-                  hour: "2-digit",
-                  minute: "2-digit",
-                })}
+                {debt.cancelled_at
+                  ? new Date(debt.cancelled_at).toLocaleTimeString("es-PE", {
+                      day: "2-digit",
+                      month: "2-digit",
+                      year: "numeric",
+                      hour: "2-digit",
+                      minute: "2-digit",
+                    })
+                  : "Fecha desconocida"}
               </div>
             )}
           </div>

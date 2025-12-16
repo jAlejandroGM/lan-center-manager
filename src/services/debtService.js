@@ -91,7 +91,8 @@ export const debtService = {
       .from("debts")
       .update({
         status: DEBT_STATUS.CANCELLED,
-        updated_by: userId, // Auditoría: Quién modificó
+        updated_by: userId,
+        cancelled_at: new Date().toISOString(),
       })
       .eq("id", id)
       .select()

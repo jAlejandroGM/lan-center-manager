@@ -13,10 +13,8 @@ import { Search, ChevronLeft, ChevronRight, X, Loader2 } from "lucide-react";
 import DateSelector from "../components/ui/DateSelector";
 import {
   getTodayLimaISO,
-  isValidActionDate,
   isFutureDate,
   formatDateForDisplay,
-  getLimaDateFromISO,
 } from "../utils/dateUtils";
 
 const Debts = () => {
