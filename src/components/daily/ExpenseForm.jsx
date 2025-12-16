@@ -80,12 +80,12 @@ const ExpenseForm = ({ onAdd, selectedDate }) => {
           value={amount}
           onChange={(e) => {
             const val = e.target.value;
-            if (val === "" || /^\d*\.?\d{0,1}$/.test(val)) {
+            if (val === "" || /^\d*\.?\d{0,2}$/.test(val)) {
               setAmount(val);
             }
           }}
           className="p-2 bg-gray-700 border border-gray-600 rounded text-white"
-          step="0.1"
+          step="0.01"
           min="0"
           required
         />

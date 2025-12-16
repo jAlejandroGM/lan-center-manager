@@ -44,12 +44,12 @@ const DebtForm = ({ onAdd, loading }) => {
           value={amount}
           onChange={(e) => {
             const val = e.target.value;
-            if (val === "" || /^\d*\.?\d{0,1}$/.test(val)) {
+            if (val === "" || /^\d*\.?\d{0,2}$/.test(val)) {
               setAmount(val);
             }
           }}
           className="w-full md:w-32 p-2 bg-gray-700 border border-gray-600 rounded text-white focus:outline-none focus:border-blue-500"
-          step="0.1"
+          step="0.01"
           min="0"
           required
         />

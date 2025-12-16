@@ -18,7 +18,7 @@ const DailyLogForm = ({ initialData, onSave, loading }) => {
       return;
     }
 
-    if (value === "" || /^\d*\.?\d{0,1}$/.test(value)) {
+    if (value === "" || /^\d*\.?\d{0,2}$/.test(value)) {
       setFormData((prev) => ({
         ...prev,
         [name]: value,
@@ -69,7 +69,7 @@ const DailyLogForm = ({ initialData, onSave, loading }) => {
               onChange={handleChange}
               className="w-full p-2 bg-gray-700 border border-gray-600 rounded text-white"
               placeholder="0.00"
-              step="0.10"
+              step="0.01"
               min="0"
               tabIndex={1}
             />
@@ -86,7 +86,7 @@ const DailyLogForm = ({ initialData, onSave, loading }) => {
               onChange={handleChange}
               placeholder="0.00"
               className="w-full p-2 bg-gray-700 border border-gray-600 rounded text-white"
-              step="0.10"
+              step="0.01"
               min="0"
               tabIndex={3}
             />
@@ -120,7 +120,7 @@ const DailyLogForm = ({ initialData, onSave, loading }) => {
               onChange={handleChange}
               placeholder="0.00"
               className="w-full p-2 bg-gray-700 border border-gray-600 rounded text-white"
-              step="0.10"
+              step="0.01"
               min="0"
               tabIndex={2}
             />
@@ -137,7 +137,7 @@ const DailyLogForm = ({ initialData, onSave, loading }) => {
               placeholder="0.00"
               onChange={handleChange}
               className="w-full p-2 bg-gray-700 border border-gray-600 rounded text-white"
-              step="0.10"
+              step="0.01"
               min="0"
               tabIndex={4}
             />

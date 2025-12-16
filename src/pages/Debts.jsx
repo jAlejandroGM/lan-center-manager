@@ -157,15 +157,20 @@ const Debts = () => {
   };
 
   const totalPages = Math.ceil(totalCount / pageSize);
+  const isViewer = user?.role === ROLES.VIEWER;
 
   return (
     <div className="max-w-4xl mx-auto">
       <div className="flex flex-col md:flex-row justify-between items-center mb-6 gap-4">
-        <h1 className="text-3xl font-bold text-white">Gestión de Deudas</h1>
-        <DateSelector
-          selectedDate={selectedDate}
-          onDateChange={setSelectedDate}
-        />
+        <h1 className="text-3xl font-bold text-white">
+          {isViewer ? "Lista de Deudas" : "Gestión de Deudas"}
+        </h1>
+        {!isViewer && (
+          <DateSelector
+            selectedDate={selectedDate}
+            onDateChange={setSelectedDate}
+          />
+        )}
       </div>
 
       {canAdd && <DebtForm onAdd={handleAddDebt} loading={isSubmitting} />}

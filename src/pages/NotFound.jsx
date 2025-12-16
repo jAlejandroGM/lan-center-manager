@@ -1,8 +1,19 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import { AlertTriangle, Home } from "lucide-react";
+import { AlertTriangle, Home, ArrowLeft } from "lucide-react";
+import { useAuth } from "../hooks/useAuth";
+import { ROLES } from "../constants";
 
 const NotFound = () => {
+  const { user } = useAuth();
+
+  // Determinar la ruta de "Inicio" según el rol
+  const getHomeRoute = () => {
+    if (!user) return "/";
+    if (user.role === ROLES.WORKER) return "/debts";
+    return "/dashboard"; // Admin y Viewer
+  };
+
   return (
     <div className="min-h-screen bg-gray-900 flex flex-col items-center justify-center p-4 text-center">
       <div className="bg-gray-800 p-8 rounded-2xl border border-gray-700 shadow-2xl max-w-md w-full flex flex-col items-center">
@@ -21,11 +32,15 @@ const NotFound = () => {
         </p>
 
         <Link
-          to="/"
+          to={getHomeRoute()}
           className="flex items-center gap-2 px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium transition-colors w-full justify-center"
         >
-          <Home className="w-5 h-5" />
-          Volver al Inicio
+          {user ? (
+            <ArrowLeft className="w-5 h-5" />
+          ) : (
+            <Home className="w-5 h-5" />
+          )}
+          Volver
         </Link>
       </div>
     </div>
