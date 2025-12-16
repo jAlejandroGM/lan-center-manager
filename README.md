@@ -1,92 +1,137 @@
-# LAN Center Manager (SaaS Multi-Tenant)
+# LAN Center Manager
 
-![Status](https://img.shields.io/badge/Status-MVP-blue) ![License](https://img.shields.io/badge/License-Private-red) ![Version](https://img.shields.io/badge/Version-1.0.0-green)
+**LAN Center Manager** is a specialized Financial & Administrative Platform designed for LAN Centers (Cyber Cafes). Unlike traditional "Cyber Control" software that manages PC time, this system focuses exclusively on **Revenue Operations (RevOps)**: daily cash flow, expense tracking, shift management, and customer debt lifecycles.
 
-## 🇬🇧 English
+Built on a **Serverless Architecture** using React 19 and Supabase, it enforces strict financial integrity through a "Business Date" vs. "System Date" logic, ensuring that reports remain accurate regardless of when data is entered.
 
-### Project Summary
+![React](https://img.shields.io/badge/React-19.0-61DAFB?style=flat-square&logo=react&logoColor=black)
+![Vite](https://img.shields.io/badge/Vite-7.0-646CFF?style=flat-square&logo=vite&logoColor=white)
+![TailwindCSS](https://img.shields.io/badge/Tailwind_CSS-4.0-38B2AC?style=flat-square&logo=tailwind-css&logoColor=white)
+![Supabase](https://img.shields.io/badge/Supabase-PostgreSQL-3ECF8E?style=flat-square&logo=supabase&logoColor=white)
+![Status](https://img.shields.io/badge/Status-Production_Ready-success?style=flat-square)
+![License](https://img.shields.io/badge/License-Private-red?style=flat-square)
 
-**LAN Center Manager** is a specialized SaaS (Software as a Service) application designed to manage the daily finances and operations of LAN Centers (Cyber Cafes). Built with a **Serverless Architecture** using React and Supabase, it focuses on financial integrity, debt tracking, and role-based access control.
+## Key Features
 
-Currently in its **MVP (Minimum Viable Product)** stage, the system features a robust "Soft Auth" mechanism for quick role switching (Admin/Worker/Viewer) and a strict Timezone-aware logic (UTC-5 Lima/Peru) to prevent financial discrepancies in daily logs.
+### 🛡️ Financial Integrity & Timezone Logic
 
-### Key Features
+- **Strict Timezone Handling:** The system enforces `America/Lima` (UTC-5) across all transactions using a centralized `dateUtils` core, preventing reporting errors caused by server/client time differences.
+- **Business vs. System Time:**
+  - **Business Date (`date`):** Used for financial reports. Allows retroactive entry of data for correct accounting periods.
+  - **Audit Timestamp (`created_at`):** Immutable system timestamp for security and auditing.
+- **Future-Proof Validation:** Logic prevents recording payments or debts in future dates relative to the system time.
 
-- **Financial Management:**
-  - **Daily Logs:** Track cash, digital payments (Yape), and night shift income with strict date validation.
-  - **Expense Tracking:** Categorized expense logging with real-time timestamping.
-  - **Debt System:** Complete lifecycle management (Create -> Pending -> Paid/Cancelled) with "Time Travel" capabilities for retroactive payments.
-- **Architecture & Security:**
-  - **Serverless Backend:** Powered by Supabase (PostgreSQL) for real-time data and scalability.
-  - **Role-Based Access (RBAC):** PIN-based authentication system separating Admin, Worker, and Viewer privileges.
-  - **Timezone Integrity:** Centralized date logic enforcing `America/Lima` (UTC-5) standards across all transactions.
-- **UX/UI:**
-  - **Modern Interface:** Built with React 19 and Tailwind CSS v4.
-  - **Responsive Design:** Optimized for desktop monitors used by cashiers.
+### 💰 Debt Lifecycle Management
 
-### Tech Stack
+- **State Machine:** Tracks debts through `PENDING` -> `PAID` or `CANCELLED` states.
+- **Payment Attribution:** Supports partial or full payments via multiple methods (CASH, YAPE), correctly attributing the income to the specific "Business Day" cash flow, not just the timestamp of the click.
+- **Audit Trails:** Every action (creation, payment, cancellation) logs the user ID responsible for the change.
 
-- **Frontend:** React 19, Vite, Tailwind CSS 4, Lucide React.
-- **Backend (BaaS):** Supabase (PostgreSQL, RLS Policies).
-- **Utilities:** date-fns (Timezone handling), React Router DOM.
+### 🔐 Security & Access Control
 
----
+- **Soft-Auth RBAC:** PIN-based authentication system optimized for high-turnover staff environments.
+  - **ADMIN:** Full access to Daily Logs, Expenses, and Debt annulment.
+  - **WORKER:** Restricted access focused on Debt collection and viewing.
+  - **VIEWER:** Read-only access to Dashboards and History.
+- **Backend Security:** Data integrity is secured via Supabase **Row Level Security (RLS)** policies.
 
-## 🇪🇸 Español
+## Tech Stack
 
-### Resumen del Proyecto
+- **Frontend Core:** React 19, Vite 7.
+- **Styling:** Tailwind CSS v4 (Zero-runtime), Lucide React (Iconography).
+- **Backend (BaaS):** Supabase (PostgreSQL DB, Auth, Edge Network).
+- **State Management:** React Context API (`AuthContext`, `ToastContext`).
+- **Utilities:** `date-fns` for temporal logic, `Intl.DateTimeFormat` for localization.
 
-**LAN Center Manager** es una aplicación SaaS (Software as a Service) especializada diseñada para gestionar las finanzas y operaciones diarias de LAN Centers (Cabinas de Internet). Construida con una **Arquitectura Serverless** utilizando React y Supabase, se enfoca en la integridad financiera, el seguimiento de deudas y el control de acceso basado en roles.
+## Project Structure
 
-Actualmente en su etapa **MVP (Producto Mínimo Viable)**, el sistema cuenta con un mecanismo robusto de "Soft Auth" para el cambio rápido de roles (Admin/Trabajador/Visualizador) y una lógica estricta de Zona Horaria (UTC-5 Lima/Perú) para prevenir discrepancias financieras en los registros diarios.
-
-### Características Principales
-
-- **Gestión Financiera:**
-  - **Registros Diarios:** Seguimiento de efectivo, pagos digitales (Yape) e ingresos del turno noche con validación estricta de fechas.
-  - **Control de Gastos:** Registro de gastos categorizados con sellado de tiempo en tiempo real.
-  - **Sistema de Deudas:** Gestión completa del ciclo de vida (Crear -> Pendiente -> Pagado/Anulado) con capacidades de "Time Travel" para pagos retroactivos.
-- **Arquitectura y Seguridad:**
-  - **Backend Serverless:** Impulsado por Supabase (PostgreSQL) para datos en tiempo real y escalabilidad.
-  - **Control de Acceso (RBAC):** Sistema de autenticación basado en PIN que separa privilegios de Admin, Trabajador y Visualizador.
-  - **Integridad de Zona Horaria:** Lógica de fechas centralizada que impone los estándares de `America/Lima` (UTC-5) en todas las transacciones.
-- **UX/UI:**
-  - **Interfaz Moderna:** Construida con React 19 y Tailwind CSS v4.
-  - **Diseño Responsivo:** Optimizado para monitores de escritorio utilizados por cajeros.
-
-### Stack Tecnológico
-
-- **Frontend:** React 19, Vite, Tailwind CSS 4, Lucide React.
-- **Backend (BaaS):** Supabase (PostgreSQL, Políticas RLS).
-- **Utilidades:** date-fns (Manejo de zonas horarias), React Router DOM.
-
----
-
-## Project Structure / Estructura del Proyecto
+The codebase follows a modular feature-based architecture:
 
 ```bash
 src/
-├── assets/          # Static assets
-├── components/      # Reusable UI components
-│   ├── daily/       # Daily log & expense forms
-│   ├── debts/       # Debt management components
-│   ├── layout/      # Main layout & protected routes
-│   └── ui/          # Generic UI elements (Modals, Toasts)
-├── constants/       # Global constants (Roles, Categories)
-├── context/         # React Context (Auth, Toast)
-├── hooks/           # Custom Hooks (useAuth, useFetch, useDebounce)
-├── pages/           # Main Application Views
-│   ├── DailyEntry   # Daily financial input
-│   ├── Dashboard    # Analytics overview
-│   ├── Debts        # Debt management system
-│   ├── History      # Historical records
-│   └── Login        # PIN-based authentication
-├── services/        # Supabase API integration layers
-└── utils/           # Core logic (dateUtils.js for UTC-5 handling)
+├── components/
+│   ├── daily/       # Forms for Daily Logs & Expenses (Business Logic)
+│   ├── debts/       # Debt List, Forms & Payment Modals
+│   ├── layout/      # App Shell, Sidebar & Protected Routes
+│   └── ui/          # Atomic components (Toasts, Modals, Selectors)
+├── constants/       # Enums for Roles, Payment Methods, & Categories
+├── context/         # Global State (Authentication & Notifications)
+├── hooks/           # Custom Hooks
+│   ├── useAuth.js   # Session management
+│   ├── useFetch.js  # Data fetching with caching & stale-while-revalidate
+│   └── useToast.js  # Feedback system
+├── pages/           # Route Views
+│   ├── DailyEntry   # Admin-only daily closing interface
+│   ├── Dashboard    # Financial analytics & KPIs
+│   ├── Debts        # Operational debt management
+│   ├── History      # Monthly/Daily breakdown
+│   └── Login        # PIN Entry
+├── services/        # Supabase Data Access Layer (DAL)
+│   ├── debtService.js
+│   ├── expenseService.js
+│   └── logService.js
+└── utils/
+    ├── calculations.js # Financial aggregation logic
+    └── dateUtils.js    # Centralized Timezone/Date logic (Critical)
 ```
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+---
 
-## Expanding the ESLint configuration
+## Getting Started
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+### Prerequisites
+
+Ensure you have the following installed on your local machine:
+
+- **Node.js** (v18.x or higher)
+- **npm** or **yarn**
+
+### Installation
+
+1. **Clone the repository**
+
+   ```bash
+   git clone https://github.com/jAlejandroGM/lan-center-manager.git
+   cd lan-center-manager
+   ```
+
+2. **Install dependencies**
+
+   ```bash
+   npm install
+   ```
+
+3. **Configure Environment Variables**
+
+   Create a `.env` file in the root directory and add your Supabase credentials:
+
+   ```env
+   VITE_SUPABASE_URL=your_supabase_project_url
+   VITE_SUPABASE_ANON_KEY=your_supabase_anon_key
+   ```
+
+### Development
+
+Start the local development server:
+
+```bash
+npm run dev
+```
+
+The application will be available at `http://localhost:5173`.
+
+### Build
+
+Generate a production-ready build:
+
+```bash
+npm run build
+```
+
+## License
+
+This project is proprietary software. Unauthorized copying, modification, distribution, or use is strictly prohibited.
+
+## Author
+
+Designed and developed with ☕ by **Alejandro Guzmán** [@alguzdev](https://alguzdev.vercel.app/)
