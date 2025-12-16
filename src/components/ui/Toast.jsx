@@ -3,9 +3,11 @@ import { X, CheckCircle, AlertCircle, Info } from "lucide-react";
 
 const Toast = ({ id, message, type, onClose }) => {
   useEffect(() => {
+    // Aumentamos el tiempo de lectura a 5 segundos (5000ms)
+    // 3 segundos era muy poco para mensajes largos o usuarios ocupados
     const timer = setTimeout(() => {
       onClose(id);
-    }, 3000); // Auto close after 3 seconds
+    }, 5000);
 
     return () => clearTimeout(timer);
   }, [id, onClose]);

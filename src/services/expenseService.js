@@ -27,10 +27,15 @@ export const expenseService = {
     return data;
   },
 
-  async addExpense(expense) {
+  async addExpense(expense, userId) {
+    // 'expense' trae 'date' (Fecha de Trabajo).
+    // 'created_at' se generará automáticamente en la BD (Tiempo del Sistema).
     const { data, error } = await supabase
       .from("expenses")
-      .insert(expense)
+      .insert({
+        ...expense,
+        // created_by: userId // Preparado para auditoría futura
+      })
       .select()
       .single();
 
@@ -38,7 +43,8 @@ export const expenseService = {
     return data;
   },
 
-  async deleteExpense(id) {
+  async deleteExpense(id, userId) {
+    // userId podría usarse aquí para verificar permisos o loguear el borrado
     const { error } = await supabase.from("expenses").delete().eq("id", id);
 
     if (error) throw error;

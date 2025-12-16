@@ -28,10 +28,15 @@ export const logService = {
     return data;
   },
 
-  async addLog(logData) {
+  async addLog(logData, userId) {
+    // Registra el cierre de caja diario.
+    // La fecha 'date' es YYYY-MM-DD y es crítica para el historial.
     const { data, error } = await supabase
       .from("daily_logs")
-      .insert(logData)
+      .insert({
+        ...logData,
+        // created_by: userId // Preparado para auditoría futura
+      })
       .select()
       .single();
 

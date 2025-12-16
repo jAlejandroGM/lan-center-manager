@@ -9,6 +9,7 @@ import { expenseService } from "../services/expenseService";
 import { debtService } from "../services/debtService";
 import { useFetch } from "../hooks/useFetch";
 import { calculateDailyTotals } from "../utils/calculations";
+import { getLimaDateFromISO } from "../utils/dateUtils";
 
 const History = () => {
   const [selectedMonth, setSelectedMonth] = useState(new Date().getMonth());
@@ -34,8 +35,12 @@ const History = () => {
       // Filter logs for this specific date
       const dayLogs = logs.filter((l) => l.date === date);
       const dayExpenses = expenses.filter((e) => e.date === date);
+
+      // CORRECCIÓN CRÍTICA: Filtrar deudas pagadas usando la fecha convertida a Lima
+      // Antes: d.paid_at.startsWith(date) -> Fallaba porque paid_at es UTC
+      // Ahora: getLimaDateFromISO(d.paid_at) === date -> Correcto (Business Date)
       const dayDebts = paidDebts.filter(
-        (d) => d.paid_at && d.paid_at.startsWith(date)
+        (d) => d.paid_at && getLimaDateFromISO(d.paid_at) === date
       );
 
       const totals = calculateDailyTotals(dayLogs, dayExpenses, dayDebts);

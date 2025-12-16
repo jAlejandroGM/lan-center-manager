@@ -10,11 +10,13 @@ import { useFetch, invalidateCache } from "../hooks/useFetch";
 import { useDebounce } from "../hooks/useDebounce";
 import { ROLES } from "../constants";
 import { Search, ChevronLeft, ChevronRight, X, Loader2 } from "lucide-react";
+import DateSelector from "../components/ui/DateSelector";
 import {
   getTodayLimaISO,
-  combineDateWithCurrentTime,
   isValidActionDate,
   isFutureDate,
+  formatDateForDisplay,
+  getLimaDateFromISO,
 } from "../utils/dateUtils";
 
 const Debts = () => {
@@ -60,26 +62,35 @@ const Debts = () => {
   });
 
   const handleAddDebt = async (debtData) => {
+    // Validar que no se creen deudas en el futuro
+    if (isFutureDate(selectedDate)) {
+      const todayLima = getTodayLimaISO();
+      toast.error(
+        `No puedes crear deudas en el futuro. Hoy es ${formatDateForDisplay(
+          todayLima
+        )}`
+      );
+      return false;
+    }
+
     setIsSubmitting(true);
     try {
-      // Usar la fecha seleccionada combinada con la hora actual
-      const dateTimeISO = combineDateWithCurrentTime(selectedDate);
-
+      // CAMBIO: Enviamos 'date' (Fecha de Trabajo) y dejamos que Supabase ponga 'created_at' (Auditoría)
       await debtService.addDebt(
         {
           ...debtData,
-          created_at: dateTimeISO,
+          date: selectedDate,
         },
         user?.id
-      ); // Pasar ID de usuario para logs futuros
+      );
 
       invalidateCache("debts_");
       await refetch();
-      toast.success("Deuda agregada exitosamente");
+      toast.success("Deuda registrada correctamente");
       return true;
     } catch (error) {
       console.error("Error adding debt:", error);
-      toast.error("Error al agregar deuda");
+      toast.error("No se pudo registrar la deuda");
       return false;
     } finally {
       setIsSubmitting(false);
@@ -97,17 +108,24 @@ const Debts = () => {
     try {
       // 1. Validar que la fecha de trabajo no sea futura
       if (isFutureDate(selectedDate)) {
+        const todayLima = getTodayLimaISO();
         toast.error(
-          `Error: No se puede registrar un pago en una fecha futura (${selectedDate}).`
+          `No puedes registrar pagos en el futuro. Hoy es ${formatDateForDisplay(
+            todayLima
+          )}`
         );
         return;
       }
 
       // 2. Validar consistencia: Fecha Pago >= Fecha Creación
       if (!isValidActionDate(selectedDate, selectedDebt.created_at)) {
-        const creationDatePart = selectedDebt.created_at.split("T")[0];
+        const creationDatePart = getLimaDateFromISO(selectedDebt.created_at);
         toast.error(
-          `Error de Consistencia: La fecha de pago (${selectedDate}) no puede ser anterior a la creación de la deuda (${creationDatePart}).`
+          `La fecha de pago (${formatDateForDisplay(
+            selectedDate
+          )}) no puede ser anterior a la creación de la deuda (${formatDateForDisplay(
+            creationDatePart
+          )})`
         );
         return;
       }
@@ -117,10 +135,10 @@ const Debts = () => {
       setSelectedDebt(null);
       invalidateCache("debts_");
       await refetch();
-      toast.success("Deuda marcada como pagada");
+      toast.success("Pago registrado correctamente");
     } catch (error) {
       console.error("Error paying debt:", error);
-      toast.error("Error al procesar el pago");
+      toast.error("No se pudo procesar el pago");
     }
   };
 
@@ -131,10 +149,10 @@ const Debts = () => {
       await debtService.cancelDebt(debt.id, user?.id);
       invalidateCache("debts_");
       await fetchDebts();
-      toast.success("Deuda anulada");
+      toast.success("Deuda anulada correctamente");
     } catch (error) {
       console.error("Error cancelling debt:", error);
-      toast.error("Error al anular deuda");
+      toast.error("No se pudo anular la deuda");
     }
   };
 
@@ -144,15 +162,10 @@ const Debts = () => {
     <div className="max-w-4xl mx-auto">
       <div className="flex flex-col md:flex-row justify-between items-center mb-6 gap-4">
         <h1 className="text-3xl font-bold text-white">Gestión de Deudas</h1>
-        <div className="flex items-center gap-4">
-          <label className="text-gray-400">Fecha de Trabajo:</label>
-          <input
-            type="date"
-            value={selectedDate}
-            onChange={(e) => setSelectedDate(e.target.value)}
-            className="bg-gray-700 text-white border border-gray-600 rounded p-2"
-          />
-        </div>
+        <DateSelector
+          selectedDate={selectedDate}
+          onDateChange={setSelectedDate}
+        />
       </div>
 
       {canAdd && <DebtForm onAdd={handleAddDebt} loading={isSubmitting} />}

@@ -3,13 +3,13 @@ import { logService } from "../services/logService";
 import { expenseService } from "../services/expenseService";
 import DailyLogForm from "../components/daily/DailyLogForm";
 import ExpenseForm from "../components/daily/ExpenseForm";
+import DateSelector from "../components/ui/DateSelector";
 import { useToast } from "../hooks/useToast";
-import {
-  getTodayLimaISO,
-  combineDateWithCurrentTime,
-} from "../utils/dateUtils";
+import { useAuth } from "../hooks/useAuth";
+import { getTodayLimaISO } from "../utils/dateUtils";
 
 const DailyEntry = () => {
+  const { user } = useAuth();
   const [selectedDate, setSelectedDate] = useState(getTodayLimaISO());
   const [savingLog, setSavingLog] = useState(false);
   const toast = useToast();
@@ -17,15 +17,18 @@ const DailyEntry = () => {
   const handleSaveLog = async (formData) => {
     try {
       setSavingLog(true);
-      await logService.addLog({
-        ...formData,
-        date: selectedDate,
-      });
+      await logService.addLog(
+        {
+          ...formData,
+          date: selectedDate,
+        },
+        user?.id
+      );
 
-      toast.success("Registro agregado exitosamente!");
+      toast.success("Cierre diario guardado correctamente");
     } catch (error) {
       console.error("Error saving log:", error);
-      toast.error("Error al guardar registro.");
+      toast.error("No se pudo guardar el cierre diario. Inténtalo de nuevo");
     } finally {
       setSavingLog(false);
     }
@@ -33,18 +36,22 @@ const DailyEntry = () => {
 
   const handleAddExpense = async (expense) => {
     try {
-      const expenseWithTime = {
+      // CORRECCIÓN: Separación de Tiempo de Trabajo vs Tiempo del Sistema
+      // 'date': Fecha de Trabajo (seleccionada por usuario)
+      // 'created_at': Tiempo del Sistema (automático por Supabase)
+      // Eliminamos la sobrescritura de created_at para mantener el log de auditoría real.
+      const expenseData = {
         ...expense,
         date: selectedDate,
-        created_at: combineDateWithCurrentTime(selectedDate),
+        // created_at: NO LO ENVIAMOS. Dejamos que Supabase ponga now()
       };
 
-      await expenseService.addExpense(expenseWithTime);
-      toast.success("Gasto agregado");
+      await expenseService.addExpense(expenseData, user?.id);
+      toast.success("Gasto registrado correctamente");
       return true;
     } catch (error) {
       console.error("Error adding expense:", error);
-      toast.error("Error al agregar gasto");
+      toast.error("No se pudo registrar el gasto");
       return false;
     }
   };
@@ -53,15 +60,11 @@ const DailyEntry = () => {
     <div className="max-w-4xl mx-auto pb-20">
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-3xl font-bold text-white">Registro Diario</h1>
-        <div className="flex items-center gap-4">
-          <label className="text-gray-400">Fecha:</label>
-          <input
-            type="date"
-            value={selectedDate}
-            onChange={(e) => setSelectedDate(e.target.value)}
-            className="bg-gray-700 text-white border border-gray-600 rounded p-2"
-          />
-        </div>
+        <DateSelector
+          selectedDate={selectedDate}
+          onDateChange={setSelectedDate}
+          label="Fecha de Registro:"
+        />
       </div>
 
       <DailyLogForm
