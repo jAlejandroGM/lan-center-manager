@@ -36,11 +36,14 @@ const History = () => {
       const dayLogs = logs.filter((l) => l.date === date);
       const dayExpenses = expenses.filter((e) => e.date === date);
 
-      // CORRECCIÓN CRÍTICA: Filtrar deudas pagadas usando la fecha convertida a Lima
-      // Antes: d.paid_at.startsWith(date) -> Fallaba porque paid_at es UTC
-      // Ahora: getLimaDateFromISO(d.paid_at) === date -> Correcto (Business Date)
+      // CORRECCIÓN: Usar payment_date (Business Date)
+      // Fallback a paid_at para registros antiguos
       const dayDebts = paidDebts.filter(
-        (d) => d.paid_at && getLimaDateFromISO(d.paid_at) === date
+        (d) =>
+          d.payment_date === date ||
+          (!d.payment_date &&
+            d.paid_at &&
+            getLimaDateFromISO(d.paid_at) === date)
       );
 
       const totals = calculateDailyTotals(dayLogs, dayExpenses, dayDebts);

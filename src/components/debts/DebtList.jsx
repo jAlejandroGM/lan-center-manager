@@ -1,8 +1,11 @@
 import React from "react";
-import { format } from "date-fns";
 import { CheckCircle, XCircle, Clock } from "lucide-react";
 import { DEBT_STATUS, ROLES, PAYMENT_METHOD_LABELS } from "../../constants";
 import { useAuth } from "../../hooks/useAuth";
+import {
+  formatDateForDisplay,
+  getLimaDateFromISO,
+} from "../../utils/dateUtils";
 
 const DebtList = ({ debts, onPayClick, onCancelClick }) => {
   const { user } = useAuth();
@@ -36,14 +39,17 @@ const DebtList = ({ debts, onPayClick, onCancelClick }) => {
               {getStatusIcon(debt.status)}
             </div>
             <div className="text-sm text-gray-400">
-              {format(new Date(debt.created_at), "dd/MM/yyyy HH:mm")}
+              {formatDateForDisplay(debt.date)}
             </div>
             {debt.status === DEBT_STATUS.PAID && (
               <div className="text-xs text-emerald-400 mt-1">
                 Pagado vía{" "}
                 {PAYMENT_METHOD_LABELS[debt.payment_method] ||
                   debt.payment_method}{" "}
-                el {format(new Date(debt.paid_at), "dd/MM HH:mm")}
+                el{" "}
+                {formatDateForDisplay(
+                  debt.payment_date || getLimaDateFromISO(debt.paid_at)
+                )}
               </div>
             )}
             {debt.status === DEBT_STATUS.PENDING && (

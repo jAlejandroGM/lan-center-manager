@@ -117,14 +117,13 @@ const Debts = () => {
         return;
       }
 
-      // 2. Validar consistencia: Fecha Pago >= Fecha Creación
-      if (!isValidActionDate(selectedDate, selectedDebt.created_at)) {
-        const creationDatePart = getLimaDateFromISO(selectedDebt.created_at);
+      // 2. Validar consistencia: Fecha Pago >= Fecha Deuda (Business Date)
+      if (selectedDate < selectedDebt.date) {
         toast.error(
           `La fecha de pago (${formatDateForDisplay(
             selectedDate
-          )}) no puede ser anterior a la creación de la deuda (${formatDateForDisplay(
-            creationDatePart
+          )}) no puede ser anterior a la fecha de la deuda (${formatDateForDisplay(
+            selectedDebt.date
           )})`
         );
         return;
