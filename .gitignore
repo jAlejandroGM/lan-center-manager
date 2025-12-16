@@ -24,7 +24,6 @@ dist-ssr
 *.sw?
 
 .env
-.env.example
 
 PROJECT_SPEC.md
 supabase_schema.sql
