@@ -1,8 +1,9 @@
 import React, { useState } from "react";
 import { Plus } from "lucide-react";
 import { EXPENSE_CATEGORIES, EXPENSE_LABELS } from "../../constants";
+import { getTodayLimaISO } from "../../utils/dateUtils";
 
-const ExpenseForm = ({ onAdd }) => {
+const ExpenseForm = ({ onAdd, selectedDate }) => {
   const [category, setCategory] = useState(EXPENSE_CATEGORIES.OTHER);
   const [detail, setDetail] = useState("");
   const [amount, setAmount] = useState("");
@@ -17,7 +18,8 @@ const ExpenseForm = ({ onAdd }) => {
       category,
       detail,
       amount: parseFloat(amount),
-      date: new Date().toISOString().split("T")[0],
+      // Usamos la fecha seleccionada por el padre, o fallback a hoy (Lima) si no existe
+      date: selectedDate || getTodayLimaISO(),
     });
     setIsSubmitting(false);
 

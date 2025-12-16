@@ -4,13 +4,6 @@ import { PlusCircle } from "lucide-react";
 const DebtForm = ({ onAdd, loading }) => {
   const [name, setName] = useState("");
   const [amount, setAmount] = useState("");
-  const [date, setDate] = useState(() => {
-    const now = new Date();
-    const year = now.getFullYear();
-    const month = String(now.getMonth() + 1).padStart(2, "0");
-    const day = String(now.getDate()).padStart(2, "0");
-    return `${year}-${month}-${day}`;
-  });
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -19,7 +12,6 @@ const DebtForm = ({ onAdd, loading }) => {
     const success = await onAdd({
       customer_name: name,
       amount: parseFloat(amount),
-      created_at: date,
     });
 
     if (success) {
@@ -38,13 +30,6 @@ const DebtForm = ({ onAdd, loading }) => {
         Nueva Deuda
       </h3>
       <div className="flex flex-col md:flex-row gap-4">
-        <input
-          type="date"
-          value={date}
-          onChange={(e) => setDate(e.target.value)}
-          className="p-2 bg-gray-700 border border-gray-600 rounded text-white focus:outline-none focus:border-blue-500"
-          required
-        />
         <input
           type="text"
           placeholder="Nombre del Cliente"

@@ -71,7 +71,7 @@ const DebtList = ({ debts, onPayClick, onCancelClick }) => {
                 </button>
                 {isAdmin && (
                   <button
-                    onClick={() => onCancelClick(debt.id)}
+                    onClick={() => onCancelClick(debt)}
                     className="px-3 py-1 bg-rose-600 hover:bg-rose-700 text-white text-sm rounded transition-colors cursor-pointer"
                   >
                     Anular

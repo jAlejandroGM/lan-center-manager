@@ -1,5 +1,6 @@
 import { supabase } from "./supabase";
 import { DEBT_STATUS } from "../constants";
+import { combineDateWithCurrentTime } from "../utils/dateUtils";
 
 export const debtService = {
   async getDebts({
@@ -50,16 +51,12 @@ export const debtService = {
   },
 
   async addDebt(debt) {
-    // If created_at is provided, use it, otherwise default to now (handled by DB or here)
-    // But if we pass created_at, we should ensure it's in the correct format.
-    // The DB default is now(), but we can override it.
-
+    // userId param prepared for future audit logs
     const { data, error } = await supabase
       .from("debts")
       .insert({
         ...debt,
         status: DEBT_STATUS.PENDING,
-        // Ensure created_at is set if passed, otherwise let DB handle it
       })
       .select()
       .single();
@@ -68,12 +65,17 @@ export const debtService = {
     return data;
   },
 
-  async markAsPaid(id, paymentMethod) {
+  async markAsPaid(id, paymentMethod, paymentDate) {
+    // userId param prepared for future audit logs
+
+    // Usamos la utilidad centralizada para combinar la fecha elegida con la hora actual de Lima
+    const dateToSave = combineDateWithCurrentTime(paymentDate);
+
     const { data, error } = await supabase
       .from("debts")
       .update({
         status: DEBT_STATUS.PAID,
-        paid_at: new Date().toISOString(),
+        paid_at: dateToSave,
         payment_method: paymentMethod,
       })
       .eq("id", id)
@@ -85,6 +87,7 @@ export const debtService = {
   },
 
   async cancelDebt(id) {
+    // userId param prepared for future audit logs
     const { data, error } = await supabase
       .from("debts")
       .update({ status: DEBT_STATUS.CANCELLED })

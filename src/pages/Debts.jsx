@@ -10,12 +10,20 @@ import { useFetch, invalidateCache } from "../hooks/useFetch";
 import { useDebounce } from "../hooks/useDebounce";
 import { ROLES } from "../constants";
 import { Search, ChevronLeft, ChevronRight, X, Loader2 } from "lucide-react";
+import {
+  getTodayLimaISO,
+  combineDateWithCurrentTime,
+  isValidActionDate,
+  isFutureDate,
+} from "../utils/dateUtils";
 
 const Debts = () => {
   const [debts, setDebts] = useState([]);
   const [selectedDebt, setSelectedDebt] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  // Inicializar con la fecha actual de Lima
+  const [selectedDate, setSelectedDate] = useState(getTodayLimaISO());
 
   const [searchInput, setSearchInput] = useState("");
 
@@ -54,15 +62,17 @@ const Debts = () => {
   const handleAddDebt = async (debtData) => {
     setIsSubmitting(true);
     try {
-      const datePart = debtData.created_at;
-      const now = new Date();
-      const timeString = now.toTimeString().split(" ")[0]; // HH:MM:SS
-      const dateTime = new Date(`${datePart}T${timeString}`);
+      // Usar la fecha seleccionada combinada con la hora actual
+      const dateTimeISO = combineDateWithCurrentTime(selectedDate);
 
-      await debtService.addDebt({
-        ...debtData,
-        created_at: dateTime.toISOString(),
-      });
+      await debtService.addDebt(
+        {
+          ...debtData,
+          created_at: dateTimeISO,
+        },
+        user?.id
+      ); // Pasar ID de usuario para logs futuros
+
       invalidateCache("debts_");
       await refetch();
       toast.success("Deuda agregada exitosamente");
@@ -77,13 +87,32 @@ const Debts = () => {
   };
 
   const handlePayClick = (debt) => {
+    // Validación básica: no permitir pagar deudas que "parecen" del futuro lejano
+    // Pero confiamos más en la validación al confirmar el pago
     setSelectedDebt(debt);
     setIsModalOpen(true);
   };
 
   const handleConfirmPayment = async (id, method) => {
     try {
-      await debtService.markAsPaid(id, method);
+      // 1. Validar que la fecha de trabajo no sea futura
+      if (isFutureDate(selectedDate)) {
+        toast.error(
+          `Error: No se puede registrar un pago en una fecha futura (${selectedDate}).`
+        );
+        return;
+      }
+
+      // 2. Validar consistencia: Fecha Pago >= Fecha Creación
+      if (!isValidActionDate(selectedDate, selectedDebt.created_at)) {
+        const creationDatePart = selectedDebt.created_at.split("T")[0];
+        toast.error(
+          `Error de Consistencia: La fecha de pago (${selectedDate}) no puede ser anterior a la creación de la deuda (${creationDatePart}).`
+        );
+        return;
+      }
+
+      await debtService.markAsPaid(id, method, selectedDate, user?.id);
       setIsModalOpen(false);
       setSelectedDebt(null);
       invalidateCache("debts_");
@@ -95,11 +124,11 @@ const Debts = () => {
     }
   };
 
-  const handleCancelDebt = async (id) => {
+  const handleCancelDebt = async (debt) => {
     if (!window.confirm("¿Estás seguro de que deseas anular esta deuda?"))
       return;
     try {
-      await debtService.cancelDebt(id);
+      await debtService.cancelDebt(debt.id, user?.id);
       invalidateCache("debts_");
       await fetchDebts();
       toast.success("Deuda anulada");
@@ -115,6 +144,15 @@ const Debts = () => {
     <div className="max-w-4xl mx-auto">
       <div className="flex flex-col md:flex-row justify-between items-center mb-6 gap-4">
         <h1 className="text-3xl font-bold text-white">Gestión de Deudas</h1>
+        <div className="flex items-center gap-4">
+          <label className="text-gray-400">Fecha de Trabajo:</label>
+          <input
+            type="date"
+            value={selectedDate}
+            onChange={(e) => setSelectedDate(e.target.value)}
+            className="bg-gray-700 text-white border border-gray-600 rounded p-2"
+          />
+        </div>
       </div>
 
       {canAdd && <DebtForm onAdd={handleAddDebt} loading={isSubmitting} />}
