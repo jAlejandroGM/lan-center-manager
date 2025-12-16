@@ -31,8 +31,8 @@ const DateSelector = ({ selectedDate, onDateChange }) => {
         />
         <button
           onClick={handleSync}
-          className="p-2 bg-gray-700 hover:bg-gray-600 text-white rounded border border-gray-600 transition-colors group relative"
-          title="Sincronizar con Hoy (Perú)"
+          className="p-2 bg-gray-700 hover:bg-gray-600 text-white rounded border border-gray-600 transition-colors group relative cursor-pointer"
+          title="Sincronizar con Hoy"
           type="button"
         >
           <CalendarClock className="w-5 h-5 text-blue-400 group-hover:text-blue-300" />
