@@ -43,11 +43,11 @@ function App() {
                   <Route path="/daily-entry" element={<DailyEntry />} />
                 </Route>
               </Route>
-            </Route>
 
-            {/* Catch-all route for 404 */}
-            <Route path="/404" element={<NotFound />} />
-            <Route path="*" element={<NotFound />} />
+              {/* Catch-all route for 404 - Protected to prevent route enumeration */}
+              <Route path="/404" element={<NotFound />} />
+              <Route path="*" element={<NotFound />} />
+            </Route>
           </Routes>
         </BrowserRouter>
       </ToastProvider>
