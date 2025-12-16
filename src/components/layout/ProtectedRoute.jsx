@@ -1,23 +1,21 @@
 import React from "react";
-import { Navigate, Outlet } from "react-router-dom";
+import { Navigate, Outlet, useLocation } from "react-router-dom";
 import { useAuth } from "../../hooks/useAuth";
 
 const ProtectedRoute = ({ allowedRoles }) => {
   const { user } = useAuth();
+  const location = useLocation();
 
   if (!user) {
-    return <Navigate to="/" replace />;
+    // Redirigir al login, guardando la ubicación intentada para UX futuro
+    return <Navigate to="/" state={{ from: location }} replace />;
   }
 
   if (allowedRoles && !allowedRoles.includes(user.role)) {
-    // If user is logged in but doesn't have permission, redirect to a safe default or show error
-    // For now, redirecting to dashboard if they have access, or login if not.
-    // A better approach might be a dedicated "Unauthorized" page.
-    return (
-      <div className="p-4 text-red-500">
-        Acceso Denegado: Permisos Insuficientes
-      </div>
-    );
+    // Si el usuario existe pero no tiene permiso, lo mandamos a 404
+    // para no revelar la existencia de la ruta (seguridad por oscuridad)
+    // o simplemente porque es una ruta "no encontrada" para su nivel de acceso.
+    return <Navigate to="/404" replace />;
   }
 
   return <Outlet />;

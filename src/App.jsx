@@ -11,6 +11,8 @@ import { ToastProvider } from "./context/ToastProvider";
 import ProtectedRoute from "./components/layout/ProtectedRoute";
 import { ROLES } from "./constants";
 
+import NotFound from "./pages/NotFound";
+
 function App() {
   return (
     <AuthProvider>
@@ -42,6 +44,10 @@ function App() {
                 </Route>
               </Route>
             </Route>
+
+            {/* Catch-all route for 404 */}
+            <Route path="/404" element={<NotFound />} />
+            <Route path="*" element={<NotFound />} />
           </Routes>
         </BrowserRouter>
       </ToastProvider>
