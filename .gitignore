@@ -26,4 +26,5 @@ dist-ssr
 .env
 
 PROJECT_SPEC.md
+REFACTOR_PLAN.md
 supabase_schema.sql

@@ -1,6 +1,6 @@
 import React from "react";
 import { CalendarClock } from "lucide-react";
-import { getTodayLimaISO } from "../../utils/dateUtils";
+import { getTodayLimaISO } from "../../lib/dateUtils";
 
 /**
  * DateSelector Component

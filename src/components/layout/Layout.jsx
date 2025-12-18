@@ -1,7 +1,7 @@
 import React from "react";
 import { Outlet, Link, useNavigate } from "react-router-dom";
-import { useAuth } from "../../hooks/useAuth";
-import { ROLES } from "../../constants";
+import { useAuth } from "../../features/auth/hooks/useAuth";
+import { ROLES } from "../../config/constants";
 import {
   LogOut,
   LayoutDashboard,
