@@ -94,18 +94,26 @@ const DebtList = ({ debts, onPayClick, onCancelClick }) => {
             {debt.status === DEBT_STATUS.PENDING && canPay && (
               <div className="flex gap-2">
                 <Button
+                  type="button" // Aseguramos que no intente hacer submit
                   variant="primary"
                   size="sm"
-                  onClick={() => onPayClick(debt)}
+                  onClick={(e) => {
+                    e.stopPropagation(); // Evitamos burbujeo innecesario
+                    onPayClick(debt);
+                  }}
                   className="bg-emerald-600 hover:bg-emerald-700 focus:ring-emerald-500"
                 >
                   Pagar
                 </Button>
                 {isAdmin && (
                   <Button
+                    type="button"
                     variant="danger"
                     size="sm"
-                    onClick={() => onCancelClick(debt)}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      onCancelClick(debt);
+                    }}
                   >
                     Anular
                   </Button>

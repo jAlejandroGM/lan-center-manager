@@ -1,4 +1,5 @@
 import { supabase } from "../../../lib/supabase";
+import { getMonthRangeLima } from "../../../lib/dateUtils";
 
 export const logService = {
   async getLogsByDate(date) {
@@ -13,9 +14,7 @@ export const logService = {
   },
 
   async getLogsByMonth(year, month) {
-    // month is 0-indexed (0 = January)
-    const startDate = new Date(year, month, 1).toISOString().split("T")[0];
-    const endDate = new Date(year, month + 1, 0).toISOString().split("T")[0];
+    const { startDate, endDate } = getMonthRangeLima(year, month);
 
     const { data, error } = await supabase
       .from("daily_logs")

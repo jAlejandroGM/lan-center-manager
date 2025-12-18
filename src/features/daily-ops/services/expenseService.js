@@ -1,4 +1,5 @@
 import { supabase } from "../../../lib/supabase";
+import { getMonthRangeLima } from "../../../lib/dateUtils";
 
 export const expenseService = {
   async getExpensesByDate(date) {
@@ -13,8 +14,7 @@ export const expenseService = {
   },
 
   async getExpensesByMonth(year, month) {
-    const startDate = new Date(year, month, 1).toISOString().split("T")[0];
-    const endDate = new Date(year, month + 1, 0).toISOString().split("T")[0];
+    const { startDate, endDate } = getMonthRangeLima(year, month);
 
     const { data, error } = await supabase
       .from("expenses")

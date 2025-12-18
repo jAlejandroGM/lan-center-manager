@@ -5,7 +5,7 @@ import { StickyNote, Loader2 } from "lucide-react";
 import MonthYearSelector from "../../components/ui/MonthYearSelector";
 import NoteModal from "../../components/ui/NoteModal";
 import { calculateDailyTotals } from "../../lib/calculations";
-import { getLimaDateFromISO } from "../../lib/dateUtils";
+import { getLimaDateFromISO, getDaysInMonthLima } from "../../lib/dateUtils";
 import { useDailyOps } from "./hooks/useDailyOps";
 
 const History = () => {
@@ -24,12 +24,8 @@ const History = () => {
 
     const { logs, expenses, paidDebts } = data;
 
-    // Generate all days in the month
-    const daysInMonth = new Date(selectedYear, selectedMonth + 1, 0).getDate();
-    const days = Array.from({ length: daysInMonth }, (_, i) => {
-      const d = new Date(selectedYear, selectedMonth, i + 1);
-      return d.toISOString().split("T")[0];
-    });
+    // Generate all days in the month using centralized utility
+    const days = getDaysInMonthLima(selectedYear, selectedMonth);
 
     const processedData = days.map((date) => {
       // Filter logs for this specific date
