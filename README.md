@@ -75,63 +75,10 @@ src/
     └── dateUtils.js    # Centralized Timezone/Date logic (Critical)
 ```
 
----
-
-## Getting Started
-
-### Prerequisites
-
-Ensure you have the following installed on your local machine:
-
-- **Node.js** (v18.x or higher)
-- **npm** or **yarn**
-
-### Installation
-
-1. **Clone the repository**
-
-   ```bash
-   git clone https://github.com/jAlejandroGM/lan-center-manager.git
-   cd lan-center-manager
-   ```
-
-2. **Install dependencies**
-
-   ```bash
-   npm install
-   ```
-
-3. **Configure Environment Variables**
-
-   Create a `.env` file in the root directory and add your Supabase credentials:
-
-   ```env
-   VITE_SUPABASE_URL=your_supabase_project_url
-   VITE_SUPABASE_ANON_KEY=your_supabase_anon_key
-   ```
-
-### Development
-
-Start the local development server:
-
-```bash
-npm run dev
-```
-
-The application will be available at `http://localhost:5173`.
-
-### Build
-
-Generate a production-ready build:
-
-```bash
-npm run build
-```
-
 ## License
 
 This project is proprietary software. Unauthorized copying, modification, distribution, or use is strictly prohibited.
 
 ## Author
 
-Designed and developed with ☕ by **Alejandro Guzmán** [@alguzdev](https://alguzdev.vercel.app/)
+Developed with ☕ by **Alejandro Guzmán** [@alguzdev](https://alguzdev.vercel.app/)
