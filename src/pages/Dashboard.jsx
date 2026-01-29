@@ -225,7 +225,7 @@ const Dashboard = () => {
         <div className="bg-gray-800 p-6 rounded-lg border border-gray-700 flex items-center justify-center">
           <p className="text-sm text-indigo-300 text-center">
             <strong>Nota:</strong> Las deudas pagadas se suman automáticamente
-            al Efectivo o Yape del día en que fueron creadas.
+            al Efectivo o Yape del día en que fueron creadas
           </p>
         </div>
       </div>
