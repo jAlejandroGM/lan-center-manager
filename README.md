@@ -4,11 +4,11 @@
 
 Built on a **Serverless Architecture** using React 19 and Supabase, it enforces strict financial integrity through a "Business Date" vs. "System Date" logic, ensuring that reports remain accurate regardless of when data is entered.
 
-![React](https://img.shields.io/badge/React-19.0-61DAFB?style=flat-square&logo=react&logoColor=black)
-![Vite](https://img.shields.io/badge/Vite-7.0-646CFF?style=flat-square&logo=vite&logoColor=white)
-![TailwindCSS](https://img.shields.io/badge/Tailwind_CSS-4.0-38B2AC?style=flat-square&logo=tailwind-css&logoColor=white)
-![Supabase](https://img.shields.io/badge/Supabase-PostgreSQL-3ECF8E?style=flat-square&logo=supabase&logoColor=white)
-![Status](https://img.shields.io/badge/Status-Production_Ready-success?style=flat-square)
+![React](https://img.shields.io/badge/React-61DAFB?style=flat-square&logo=react&logoColor=black)
+![Vite](https://img.shields.io/badge/Vite-646CFF?style=flat-square&logo=vite&logoColor=white)
+![TailwindCSS](https://img.shields.io/badge/Tailwind_CSS-38B2AC?style=flat-square&logo=tailwind-css&logoColor=white)
+![Supabase](https://img.shields.io/badge/Supabase-3ECF8E?style=flat-square&logo=supabase&logoColor=white)
+![Status](https://img.shields.io/badge/Status-Live-success?style=flat-square)
 ![License](https://img.shields.io/badge/License-Private-red?style=flat-square)
 
 ## Key Features
@@ -75,63 +75,10 @@ src/
     └── dateUtils.js    # Centralized Timezone/Date logic (Critical)
 ```
 
----
-
-## Getting Started
-
-### Prerequisites
-
-Ensure you have the following installed on your local machine:
-
-- **Node.js** (v18.x or higher)
-- **npm** or **yarn**
-
-### Installation
-
-1. **Clone the repository**
-
-   ```bash
-   git clone https://github.com/jAlejandroGM/lan-center-manager.git
-   cd lan-center-manager
-   ```
-
-2. **Install dependencies**
-
-   ```bash
-   npm install
-   ```
-
-3. **Configure Environment Variables**
-
-   Create a `.env` file in the root directory and add your Supabase credentials:
-
-   ```env
-   VITE_SUPABASE_URL=your_supabase_project_url
-   VITE_SUPABASE_ANON_KEY=your_supabase_anon_key
-   ```
-
-### Development
-
-Start the local development server:
-
-```bash
-npm run dev
-```
-
-The application will be available at `http://localhost:5173`.
-
-### Build
-
-Generate a production-ready build:
-
-```bash
-npm run build
-```
-
 ## License
 
 This project is proprietary software. Unauthorized copying, modification, distribution, or use is strictly prohibited.
 
 ## Author
 
-Designed and developed with ☕ by **Alejandro Guzmán** [@alguzdev](https://alguzdev.vercel.app/)
+Developed with ☕ by **Alejandro Guzmán** [@alguzdev](https://alguzdev.vercel.app/)
