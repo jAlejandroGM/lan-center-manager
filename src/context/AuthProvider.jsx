@@ -5,9 +5,21 @@ import { ROLES } from "../constants";
 // Mapeo extendido para incluir ID y Nombre (Simulando una DB de usuarios)
 // Esto soluciona el problema de 'user.id' undefined en los servicios
 const USER_MAP = {
-  1234: { id: "viewer-001", name: "Visualizador", role: ROLES.VIEWER },
-  5678: { id: "worker-001", name: "Trabajador", role: ROLES.WORKER },
-  9999: { id: "admin-001", name: "Administrador", role: ROLES.ADMIN },
+  [import.meta.env.VITE_VIEWER_PIN]: {
+    id: "viewer-001",
+    name: "Visualizador",
+    role: ROLES.VIEWER,
+  },
+  [import.meta.env.VITE_WORKER_PIN]: {
+    id: "worker-001",
+    name: "Trabajador",
+    role: ROLES.WORKER,
+  },
+  [import.meta.env.VITE_ADMIN_PIN]: {
+    id: "admin-001",
+    name: "Administrador",
+    role: ROLES.ADMIN,
+  },
 };
 
 export const AuthProvider = ({ children }) => {

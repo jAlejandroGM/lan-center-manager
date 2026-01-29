@@ -3,7 +3,12 @@ import { logService } from "../services/logService";
 import { expenseService } from "../services/expenseService";
 import { debtService } from "../services/debtService";
 import MonthYearSelector from "../components/ui/MonthYearSelector";
-import { DollarSign, TrendingDown, AlertCircle } from "lucide-react";
+import {
+  DollarSign,
+  TrendingDown,
+  AlertCircle,
+  Calculator,
+} from "lucide-react";
 
 const Dashboard = () => {
   const [selectedMonth, setSelectedMonth] = useState(new Date().getMonth());
@@ -14,7 +19,9 @@ const Dashboard = () => {
     nightShift: 0,
     expenses: 0,
     shortage: 0,
-    totalIncome: 0,
+    totalRegister: 0,
+    pendingDebtsTotal: 0,
+    totalFinal: 0,
   });
   const [loading, setLoading] = useState(true);
 
@@ -23,27 +30,28 @@ const Dashboard = () => {
       try {
         setLoading(true);
 
-        const [logs, expenses, paidDebts] = await Promise.all([
+        const [logs, expenses, paidDebts, pendingDebts] = await Promise.all([
           logService.getLogsByMonth(selectedYear, selectedMonth),
           expenseService.getExpensesByMonth(selectedYear, selectedMonth),
           debtService.getPaidDebtsByMonth(selectedYear, selectedMonth),
+          debtService.getPendingDebtsByMonth(selectedYear, selectedMonth),
         ]);
 
         const cashFromLogs = logs.reduce(
           (sum, log) => sum + (log.cash_income || 0),
-          0
+          0,
         );
         const yapeFromLogs = logs.reduce(
           (sum, log) => sum + (log.yape_income || 0),
-          0
+          0,
         );
         const nightShift = logs.reduce(
           (sum, log) => sum + (log.night_shift_income || 0),
-          0
+          0,
         );
-        const shortage = logs.reduce(
-          (sum, log) => sum + (log.shortage_amount || 0),
-          0
+        const totalRegister = logs.reduce(
+          (sum, log) => sum + (log.total_register || 0),
+          0,
         );
 
         // 2. Sum from Debts (distributed by method)
@@ -55,13 +63,34 @@ const Dashboard = () => {
           .filter((d) => d.payment_method === "YAPE")
           .reduce((sum, d) => sum + d.amount, 0);
 
+        // Deudas pendientes del mes
+        const pendingDebtsTotal = pendingDebts.reduce(
+          (sum, d) => sum + d.amount,
+          0,
+        );
+
         // 3. Sum Expenses
         const totalExpenses = expenses.reduce((sum, e) => sum + e.amount, 0);
+
+        // Separar por categoría
+        const staffPayment = expenses
+          .filter((e) => e.category === "STAFF_PAYMENT")
+          .reduce((sum, e) => sum + e.amount, 0);
+        const otherExpenses = totalExpenses - staffPayment;
 
         // 4. Combined Totals
         const cashIncome = cashFromLogs + debtsCash;
         const yapeIncome = yapeFromLogs + debtsYape;
-        const totalIncome = cashIncome + yapeIncome + nightShift;
+
+        // Nueva fórmula: Faltante = Total Caja - (Efectivo + Yape + Deudas Pendientes)
+        const shortage =
+          totalRegister > 0
+            ? totalRegister - (cashIncome + yapeIncome + pendingDebtsTotal)
+            : 0;
+
+        // Nueva fórmula: Total Final = Total Caja + Amanecidas - Pagos Staff - Varios
+        const totalFinal =
+          totalRegister + nightShift - staffPayment - otherExpenses;
 
         setMetrics({
           cashIncome,
@@ -69,7 +98,9 @@ const Dashboard = () => {
           nightShift,
           expenses: totalExpenses,
           shortage,
-          totalIncome,
+          totalRegister,
+          pendingDebtsTotal,
+          totalFinal,
         });
       } catch (error) {
         console.error("Error fetching dashboard data:", error);
@@ -94,7 +125,7 @@ const Dashboard = () => {
         <div
           className={`p-3 rounded-full bg-gray-700 ${color.replace(
             "text-",
-            "text-opacity-80 "
+            "text-opacity-80 ",
           )}`}
         >
           <Icon className="w-6 h-6" />
@@ -126,27 +157,34 @@ const Dashboard = () => {
       {loading ? (
         <div className="text-center text-white">Cargando métricas...</div>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
           <MetricCard
-            title="Total Ingresos"
-            value={metrics.totalIncome}
+            title="Total Caja"
+            value={metrics.totalRegister}
+            icon={Calculator}
+            color="text-cyan-400"
+            subtext="Registrado en el programa del cyber"
+          />
+          <MetricCard
+            title="Total Final"
+            value={metrics.totalFinal}
             icon={DollarSign}
             color="text-emerald-400"
-            subtext="Efectivo + Yape + Amanecidas + Deudas pagadas"
+            subtext="Caja + Amanecidas - Staff - Varios"
           />
           <MetricCard
             title="Total Gastos"
             value={metrics.expenses}
             icon={TrendingDown}
             color="text-yellow-400"
-            subtext="Pagos al Staff + Gatos en Suministros"
+            subtext="Pagos al Staff + Gastos en Suministros"
           />
           <MetricCard
             title="Dinero Faltante"
             value={metrics.shortage}
             icon={AlertCircle}
             color="text-rose-400"
-            subtext="Descuadre de caja sin justificación"
+            subtext="Caja - (Efectivo + Yape + Deudas)"
           />
         </div>
       )}
@@ -159,41 +197,36 @@ const Dashboard = () => {
           <div className="space-y-4">
             <div className="flex justify-between items-center border-b border-gray-700 pb-2">
               <span className="text-gray-300">Efectivo</span>
-              <span className="text-white font-bold">
+              <span className="text-emerald-400 font-bold">
                 S/. {metrics.cashIncome.toFixed(2)}
               </span>
             </div>
             <div className="flex justify-between items-center border-b border-gray-700 pb-2">
               <span className="text-gray-300">Yape</span>
-              <span className="text-white font-bold">
+              <span className="text-violet-400 font-bold">
                 S/. {metrics.yapeIncome.toFixed(2)}
+              </span>
+            </div>
+            <div className="flex justify-between items-center border-b border-gray-700 pb-2">
+              <span className="text-gray-300">Deudas Pendientes</span>
+              <span className="text-amber-400 font-bold">
+                S/. {metrics.pendingDebtsTotal.toFixed(2)}
               </span>
             </div>
             <div className="flex justify-between items-center">
               <span className="text-gray-300">Amanecidas</span>
-              <span className="text-white font-bold">
+              <span className="text-indigo-400 font-bold">
                 S/. {metrics.nightShift.toFixed(2)}
               </span>
             </div>
           </div>
         </div>
 
-        <div className="bg-gray-800 p-6 rounded-lg border border-gray-700">
-          <h3 className="text-lg font-bold text-white mb-4">
-            Estado del Sistema
-          </h3>
-          <p className="text-gray-400">
-            Este panel refleja las operaciones del{" "}
-            <strong>mes seleccionado</strong>. Asegúrate de registrar
-            correctamente todos los gastos y deudas para obtener un Total Neto
-            preciso.
+        <div className="bg-gray-800 p-6 rounded-lg border border-gray-700 flex items-center justify-center">
+          <p className="text-sm text-indigo-300 text-center">
+            <strong>Nota:</strong> Las deudas pagadas se suman automáticamente
+            al Efectivo o Yape del día en que fueron creadas.
           </p>
-          <div className="mt-6 p-4 bg-indigo-900/20 rounded border border-indigo-800">
-            <p className="text-sm text-indigo-300">
-              <strong>Consejo:</strong> Usa la página 'Historial' para ver el
-              detalle día por día.
-            </p>
-          </div>
         </div>
       </div>
     </div>

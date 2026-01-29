@@ -6,7 +6,7 @@ const DailyLogForm = ({ initialData, onSave, loading }) => {
     cash_income: initialData?.cash_income || "",
     yape_income: initialData?.yape_income || "",
     night_shift_income: initialData?.night_shift_income || "",
-    shortage_amount: initialData?.shortage_amount || "",
+    total_register: initialData?.total_register || "",
     notes: initialData?.notes || "",
   });
 
@@ -26,6 +26,13 @@ const DailyLogForm = ({ initialData, onSave, loading }) => {
     }
   };
 
+  const handleKeyDown = (e) => {
+    if (e.key === "Enter") {
+      e.preventDefault();
+      handleSubmit(e);
+    }
+  };
+
   const handleSubmit = (e) => {
     e.preventDefault();
     const processedData = {
@@ -38,10 +45,10 @@ const DailyLogForm = ({ initialData, onSave, loading }) => {
         formData.night_shift_income === ""
           ? 0
           : parseFloat(formData.night_shift_income),
-      shortage_amount:
-        formData.shortage_amount === ""
+      total_register:
+        formData.total_register === ""
           ? 0
-          : parseFloat(formData.shortage_amount),
+          : parseFloat(formData.total_register),
     };
     onSave(processedData);
   };
@@ -60,6 +67,24 @@ const DailyLogForm = ({ initialData, onSave, loading }) => {
         <div className="flex flex-col h-full gap-6">
           <div>
             <label className="block text-sm font-medium text-gray-400 mb-1">
+              Total Caja
+            </label>
+            <input
+              type="number"
+              name="total_register"
+              value={formData.total_register}
+              placeholder="0.00"
+              onChange={handleChange}
+              onKeyDown={handleKeyDown}
+              className="w-full p-2 bg-gray-700 border border-gray-600 rounded text-white"
+              step="0.01"
+              min="0"
+              tabIndex={1}
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-400 mb-1">
               Efectivo
             </label>
             <input
@@ -67,14 +92,37 @@ const DailyLogForm = ({ initialData, onSave, loading }) => {
               name="cash_income"
               value={formData.cash_income}
               onChange={handleChange}
+              onKeyDown={handleKeyDown}
               className="w-full p-2 bg-gray-700 border border-gray-600 rounded text-white"
               placeholder="0.00"
               step="0.01"
               min="0"
-              tabIndex={1}
+              tabIndex={2}
             />
           </div>
 
+          <div>
+            <label className="block text-sm font-medium text-gray-400 mb-1">
+              Yape
+            </label>
+            <input
+              type="number"
+              name="yape_income"
+              value={formData.yape_income}
+              onChange={handleChange}
+              onKeyDown={handleKeyDown}
+              placeholder="0.00"
+              className="w-full p-2 bg-gray-700 border border-gray-600 rounded text-white"
+              step="0.01"
+              min="0"
+              tabIndex={3}
+            />
+          </div>
+        </div>
+
+        {/* Right Column */}
+
+        <div className="flex flex-col h-full gap-6">
           <div>
             <label className="block text-sm font-medium text-gray-400 mb-1">
               Amanecidas
@@ -84,11 +132,12 @@ const DailyLogForm = ({ initialData, onSave, loading }) => {
               name="night_shift_income"
               value={formData.night_shift_income}
               onChange={handleChange}
+              onKeyDown={handleKeyDown}
               placeholder="0.00"
               className="w-full p-2 bg-gray-700 border border-gray-600 rounded text-white"
               step="0.01"
               min="0"
-              tabIndex={3}
+              tabIndex={4}
             />
           </div>
 
@@ -103,43 +152,6 @@ const DailyLogForm = ({ initialData, onSave, loading }) => {
               className="w-full p-2 bg-gray-700 border border-gray-600 rounded text-white resize-none"
               rows="1"
               tabIndex={5}
-            />
-          </div>
-        </div>
-
-        {/* Right Column */}
-        <div className="flex flex-col h-full gap-6">
-          <div>
-            <label className="block text-sm font-medium text-gray-400 mb-1">
-              Yape
-            </label>
-            <input
-              type="number"
-              name="yape_income"
-              value={formData.yape_income}
-              onChange={handleChange}
-              placeholder="0.00"
-              className="w-full p-2 bg-gray-700 border border-gray-600 rounded text-white"
-              step="0.01"
-              min="0"
-              tabIndex={2}
-            />
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-gray-400 mb-1">
-              Dinero Faltante
-            </label>
-            <input
-              type="number"
-              name="shortage_amount"
-              value={formData.shortage_amount}
-              placeholder="0.00"
-              onChange={handleChange}
-              className="w-full p-2 bg-gray-700 border border-gray-600 rounded text-white"
-              step="0.01"
-              min="0"
-              tabIndex={4}
             />
           </div>
 

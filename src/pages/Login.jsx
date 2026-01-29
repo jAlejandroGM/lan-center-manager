@@ -34,7 +34,7 @@ const Login = () => {
           </div>
         </div>
         <h1 className="text-2xl font-bold text-center mb-6">
-          Acceso al Sistema
+          Lan Center Manager
         </h1>
 
         <form onSubmit={handleSubmit} className="space-y-4">
@@ -66,10 +66,6 @@ const Login = () => {
             Ingresar
           </button>
         </form>
-
-        <div className="mt-6 text-center text-xs text-gray-500">
-          <p>Viewer: 1234 | Worker: 5678 | Admin: 9999</p>
-        </div>
       </div>
     </div>
   );

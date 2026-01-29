@@ -36,6 +36,8 @@ export const debtService = {
     return { data, count };
   },
 
+  // Obtener deudas PAGADAS por mes - Filtramos por fecha de CREACIÓN (date)
+  // porque el pago se suma al efectivo/yape del día en que se creó la deuda
   async getPaidDebtsByMonth(year, month) {
     const startDate = new Date(year, month, 1).toISOString().split("T")[0];
     const endDate = new Date(year, month + 1, 0).toISOString().split("T")[0];
@@ -44,8 +46,24 @@ export const debtService = {
       .from("debts")
       .select("*")
       .eq("status", DEBT_STATUS.PAID)
-      .gte("payment_date", startDate)
-      .lte("payment_date", endDate);
+      .gte("date", startDate)
+      .lte("date", endDate);
+
+    if (error) throw error;
+    return data;
+  },
+
+  // Obtener deudas PENDING por mes (para mostrar en columna "Deudas" del historial)
+  async getPendingDebtsByMonth(year, month) {
+    const startDate = new Date(year, month, 1).toISOString().split("T")[0];
+    const endDate = new Date(year, month + 1, 0).toISOString().split("T")[0];
+
+    const { data, error } = await supabase
+      .from("debts")
+      .select("*")
+      .eq("status", DEBT_STATUS.PENDING)
+      .gte("date", startDate)
+      .lte("date", endDate);
 
     if (error) throw error;
     return data;
